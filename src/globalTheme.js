@@ -4,6 +4,9 @@ let theme = createMuiTheme({
   navbarHeight: {
     minHeight: 51,
   },
+  typography: {
+    fontFamily: '"Open Sans","Helvetica","Arial",sans-serif',
+  },
 });
 
 theme = responsiveFontSizes(theme);
