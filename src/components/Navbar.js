@@ -21,8 +21,9 @@ const useStyles = makeStyles((theme) => {
     root: {
       flexGrow: 1,
       backgroundColor: "#1D1D1F",
-      maxHeight: "51px",
+      minHeight: theme.navbarHeight.minHeight,
     },
+
     title: {
       flexGrow: 1,
       marginLeft: "5em",
@@ -61,8 +62,8 @@ export default function Navbar() {
 
   // AppBar is the header tag.
   return (
-    <AppBar className={styles.root}>
-      <Toolbar>
+    <AppBar>
+      <Toolbar classes={{ root: styles.root }}>
         <Logo />
         <Typography variant="h6" className={styles.title}>
           Goog Morning Dima.

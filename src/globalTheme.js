@@ -1,11 +1,9 @@
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 
 let theme = createMuiTheme({
-  // typography:{
-  //     h3:{
-  //         [theme.breakpoints.down('sm')]:
-  //     }
-  // }
+  navbarHeight: {
+    minHeight: 51,
+  },
 });
 
 theme = responsiveFontSizes(theme);
