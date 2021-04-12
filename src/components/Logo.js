@@ -6,6 +6,8 @@ export default function Logo() {
       className="logoContainer"
       style={{
         height: "100%",
+        display: "flex",
+        alignItems: "center",
       }}
     >
       <svg
@@ -15,7 +17,7 @@ export default function Logo() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g id="Logo" clip-path="url(#clip0)">
+        <g id="Logo" clipPath="url(#clip0)">
           <g id="Group">
             <g id="Group_2">
               <path
