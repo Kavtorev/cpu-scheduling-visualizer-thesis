@@ -10,7 +10,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
-import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +18,7 @@ import {
   deleteSelectedRows,
   resetRowSelection,
 } from "../redux/ui/uiSlice";
+import PaperHeader from "./PaperHeader";
 
 const useStyles = makeStyles((theme) => ({
   gridHeader: {
@@ -75,9 +75,7 @@ export default function CustomToolbar() {
   return (
     <Grid container alignItems="center">
       <Grid item sm={12} lg={6}>
-        <Typography variant="h6" classes={{ root: styles.gridHeader }}>
-          Dane wejściowe
-        </Typography>
+        <PaperHeader>Dane wejściowe</PaperHeader>
       </Grid>
       <Grid item xs={12} lg={6}>
         <GridToolbarContainer className={styles.toolbarContainer}>

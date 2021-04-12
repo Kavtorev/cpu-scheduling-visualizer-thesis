@@ -28,9 +28,6 @@ const initialState = {
         field: "col1",
         headerName: "Column 1",
         flex: 0.3,
-        renderCell: (params) => {
-          return <Typography>{params.value}</Typography>;
-        },
       },
       {
         id: Math.random(),
@@ -54,6 +51,19 @@ const initialState = {
       { id: 12, col1: "3", col2: "is Amazing" },
     ],
   },
+  visualizationsList: [
+    {
+      id: 1626,
+      name: "Wizualizacja 1",
+    },
+    { id: 23473, name: "Wizualizacja 2" },
+    { id: 3364, name: "Wizualizacja 3" },
+    { id: 4737, name: "Wizualizacja 4" },
+    { id: 2344473, name: "Wizualizacja 2" },
+    { id: 337364, name: "Wizualizacja 3" },
+    { id: 473837, name: "Wizualizacja 4" },
+    { id: 238344473, name: "Wizualizacja 2" },
+  ],
 };
 
 const uiSlice = createSlice({
@@ -98,34 +108,32 @@ const uiSlice = createSlice({
   },
 });
 
-export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
-const _getExtraFormsAsArray = (state) => Object.entries(state.ui.extraForms);
-
 export const getExtraFormsAsArray = createSelector(
-  _getExtraFormsAsArray,
+  (state) => Object.entries(state.ui.extraForms),
   (forms) => forms
 );
 
-const getColumns = (state) => state.ui.dataGrid.columns;
-const getRows = (state) => state.ui.dataGrid.rows;
-
-export const getRowsSelector = createSelector(getRows, (rows) => rows);
+export const getRowsSelector = createSelector(
+  (state) => state.ui.dataGrid.columns,
+  (rows) => rows
+);
 export const getColumnsSelector = createSelector(
-  getColumns,
+  (state) => state.ui.dataGrid.rows,
   (columns) => columns
 );
-export const getNumberOfRows = (state) => state.ui.dataGrid.numberOfRows;
-export const _getNumberOfSelectedRows = (state) =>
-  state.ui.dataGrid.selectedRows.length;
 
 export const getNumberOfSelectedRows = createSelector(
-  _getNumberOfSelectedRows,
-  (num) => {
-    console.log("memoized?");
-    return num;
-  }
+  (state) => state.ui.dataGrid.selectedRows.length,
+  (num) => num
 );
 
+export const getVisualizations = createSelector(
+  (state) => state.ui.visualizationsList,
+  (vis) => vis
+);
+
+export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
+export const getNumberOfRows = (state) => state.ui.dataGrid.numberOfRows;
 export const getNumberOfColumns = (state) => state.ui.dataGrid.numberOfColumns;
 
 export default uiSlice.reducer;

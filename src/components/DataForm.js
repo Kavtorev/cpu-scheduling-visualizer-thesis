@@ -1,11 +1,10 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import ExtraFormsList from "./ExtraFormsList";
 import ColumnForm from "./ColumnForm";
-
+import PaperHeader from "./PaperHeader";
 const useStyles = makeStyles((theme) => ({
   paperRoot: {
     marginBottom: "1em",
@@ -19,10 +18,6 @@ const useStyles = makeStyles((theme) => ({
   innerGridRoot: {
     paddingTop: "4px",
   },
-
-  header: {
-    padding: theme.dataGridHeaders.padding,
-  },
 }));
 
 export default function DataForm() {
@@ -30,9 +25,7 @@ export default function DataForm() {
 
   return (
     <Paper classes={{ root: styles.paperRoot }}>
-      <Typography variant="h6" classes={{ root: styles.header }}>
-        Add a new record
-      </Typography>
+      <PaperHeader>Dodaj nowy record</PaperHeader>
       <Grid container classes={{ root: styles.gridRoot }}>
         <Grid item xs={12} lg={10}>
           <Grid

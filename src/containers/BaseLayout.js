@@ -25,6 +25,7 @@ export default function BaseLayout() {
           </Grid>
           <Grid item xs={12} md={4}>
             {/* Saved Animations go here */}
+            <VisualizationsBoard />
           </Grid>
         </Grid>
       </Grid>

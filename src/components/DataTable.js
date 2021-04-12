@@ -26,13 +26,8 @@ const useStyles = makeStyles((theme) => ({
       color: "#0066CC",
     },
   },
-
   dataGridRootVariable: {
     backgroundColor: "rgba(0, 102, 204, 0.08)",
-  },
-
-  gridHeader: {
-    padding: theme.dataGridHeaders.padding,
   },
 }));
 
