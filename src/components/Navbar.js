@@ -5,7 +5,6 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,6 +14,8 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Logo from "./Logo";
+import { useDispatch, useSelector } from "react-redux";
+import { getIsSidebarToggled, toggleSidebar } from "../redux/ui/uiSlice";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -56,9 +57,10 @@ const useStyles = makeStyles((theme) => {
 
 export default function Navbar() {
   const styles = useStyles();
-  const [toggle, setToggle] = React.useState(false);
+  const dispatch = useDispatch();
+  const toggle = useSelector(getIsSidebarToggled);
 
-  const toggleDrawer = (option) => () => setToggle(option);
+  const handleSidebarToggle = (option) => () => dispatch(toggleSidebar(option));
 
   // AppBar is the header tag.
   return (
@@ -66,7 +68,7 @@ export default function Navbar() {
       <Toolbar classes={{ root: styles.root }}>
         <Logo />
         <Typography variant="h6" className={styles.title}>
-          Goog Morning Dima.
+          Good Morning Dima.
         </Typography>
         <Hidden xsDown>
           <LoginButton
@@ -79,17 +81,17 @@ export default function Navbar() {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={toggleDrawer(true)}
+            onClick={handleSidebarToggle(true)}
           >
             <MenuIcon />
           </IconButton>
         </Hidden>
-        <div className="sideBar" onClick={toggleDrawer(false)}>
+        <div className="sideBar" onClick={handleSidebarToggle(false)}>
           <Drawer
             open={toggle}
             anchor={"right"}
             classes={{ paper: styles.paper }}
-            onClose={toggleDrawer(false)}
+            onClose={handleSidebarToggle(false)}
           >
             <List>
               <ListItem button>
