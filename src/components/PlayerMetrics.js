@@ -3,22 +3,43 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import ColumnForm from "./ColumnForm";
 
-const useStyles = makeStyles((theme) => ({}));
+import {
+  AverageResponseTime,
+  AverageWaitingIcon,
+  AverageTurnaroundIcon,
+} from "./PlayerMetricsIcons";
 
-const metricsLabels = [
-  "Average Turnaround Time",
-  "Average Waiting Time",
-  "Average Response Time",
+const useStyles = makeStyles((theme) => ({
+  metricFormRoot: {
+    "& .MuiInputBase-input": {
+      marginLeft: "1em",
+    },
+    "& .Mui-disabled": {
+      color: "#777777",
+    },
+  },
+}));
+
+const metricsMeta = [
+  { label: "Average Turnaround Time", icon: <AverageTurnaroundIcon /> },
+  { label: "Average Waiting Time", icon: <AverageWaitingIcon /> },
+  { label: "Average Response Time", icon: <AverageResponseTime /> },
 ];
 
 export default function PlayerMetrics() {
   const styles = useStyles();
   return (
     <Grid container spacing={2}>
-      {metricsLabels.map((e) => {
+      {metricsMeta.map((e) => {
         return (
-          <Grid item>
-            <ColumnForm label={e} />
+          <Grid item key={e.label}>
+            <ColumnForm
+              label={e.label}
+              startAdornment={e.icon}
+              classes={{ root: styles.metricFormRoot }}
+              defaultValue="0 s."
+              disabled
+            />
           </Grid>
         );
       })}
