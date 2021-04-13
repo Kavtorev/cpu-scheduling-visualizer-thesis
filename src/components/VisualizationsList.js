@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Typography from "@material-ui/core/Typography";
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function VisualizationsList() {
+export default memo(function VisualizationsList() {
   const vis = useSelector(getVisualizations);
   const styles = useStyles();
   return (
@@ -31,4 +31,4 @@ export default function VisualizationsList() {
       })}
     </List>
   );
-}
+});

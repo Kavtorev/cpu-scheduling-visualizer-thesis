@@ -1,13 +1,9 @@
-import React from "react";
-import AddRoundedIcon from "@material-ui/icons/AddRounded";
-import { Grid } from "@material-ui/core";
+import React, { memo } from "react";
 import { useSelector } from "react-redux";
 import { getExtraFormsAsArray } from "../redux/ui/uiSlice";
-import ExtraColumnForm from "./ExtraColumnForm";
-import ExtraColumnButton from "./ExtraColumnButton";
 import ExtraFormItem from "./ExtraFormItem";
 
-export default function ExtraFormsList() {
+export default memo(function ExtraFormsList() {
   const extraForms = useSelector(getExtraFormsAsArray);
   return (
     <>
@@ -16,4 +12,4 @@ export default function ExtraFormsList() {
       })}
     </>
   );
-}
+});
