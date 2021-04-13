@@ -30,22 +30,22 @@ const algorithms = [
 ];
 
 const playerButtons = [
-  { name: "Start", icon: <PlayArrowRoundedIcon />, color: "#0066CC" },
-  { name: "Stop", icon: <StopRoundedIcon />, color: "#F64969" },
-  { name: "Step Back", icon: <RestoreRoundedIcon />, color: "#287C96" },
-  { name: "Step Forward", icon: <UpdateRoundedIcon />, color: "#70C38C" },
   {
     name: "Decrease speed",
     icon: <FastRewindRoundedIcon />,
-    color: "#F5AD58",
+    color: "#447579",
   },
+  { name: "Step Back", icon: <RestoreRoundedIcon />, color: "#5D6395" },
+  { name: "Start", icon: <PlayArrowRoundedIcon />, color: "#0066CC" },
+  { name: "Stop", icon: <StopRoundedIcon />, color: "#D93148" },
+  { name: "Step Forward", icon: <UpdateRoundedIcon />, color: "#A9CB6C" },
   {
     name: "Increase speed",
     icon: <FastForwardRoundedIcon />,
-    color: "#70C38C",
+    color: "#447579",
   },
 
-  { name: "Reset", icon: <CachedRoundedIcon />, color: "#F55858" },
+  { name: "Reset", icon: <CachedRoundedIcon />, color: "#C11D1C" },
 ];
 
 export default function PlayerConfigurationPanel() {
@@ -69,7 +69,7 @@ export default function PlayerConfigurationPanel() {
           classes={{ root: styles.algoSelectionRoot }}
         >
           {algorithms.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
+            <MenuItem key={option.label} value={option.value}>
               {option.label}
             </MenuItem>
           ))}
@@ -79,12 +79,16 @@ export default function PlayerConfigurationPanel() {
         <Grid container justify="center" alignItems="center">
           {playerButtons.map((button) => {
             return (
-              <Grid item sx={1}>
+              <Grid item sx={1} key={button.name}>
                 <Tooltip
                   title={button.name}
                   aria-label={button.name.toLowerCase()}
                 >
-                  <IconButton aria-label={button.name.toLowerCase()}>
+                  <IconButton
+                    aria-label={button.name.toLowerCase()}
+                    style={{ color: `${button.color}` }}
+                    size="medium"
+                  >
                     {button.icon}
                   </IconButton>
                 </Tooltip>

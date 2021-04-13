@@ -2,7 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography } from "@material-ui/core";
-import Timeline from "./timeline";
+import Timeline from "./Timeline";
 
 const useStyles = makeStyles((theme) => ({
   gridRoot: {
@@ -34,7 +34,7 @@ export default function PlayerAnimatedLine() {
     <Grid container spacing={2} classes={{ root: styles.gridRoot }} mt={3}>
       {processes.map((e) => {
         return (
-          <Grid item>
+          <Grid item key={Math.random() + Date.now()}>
             <Box
               display="flex"
               flexWrap="wrap"
