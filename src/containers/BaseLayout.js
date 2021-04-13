@@ -4,6 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import DataTable from "../components/DataTable";
 import DataForm from "../components/DataForm";
 import VisualizationsBoard from "../components/VisualizationsBoard";
+import Player from "../components/Player";
+import Logger from "../components/Logger";
 
 const useStyles = makeStyles((theme) => ({
   gridRoot: {
@@ -24,17 +26,18 @@ export default function BaseLayout() {
             <DataTable />
           </Grid>
           <Grid item xs={12} md={4}>
-            {/* Saved Animations go here */}
             <VisualizationsBoard />
           </Grid>
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Grid container>
-          {/* animation player goes here */}
-          <Grid item xs={12} sm={6}></Grid>
-          {/* Logger goes here */}
-          <Grid item xs={12} sm={6}></Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={8}>
+            <Player />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Logger />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
