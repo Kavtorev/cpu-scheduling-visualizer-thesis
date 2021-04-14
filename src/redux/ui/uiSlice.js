@@ -1,6 +1,6 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
-import Button from "@material-ui/core/Button";
-import { Typography } from "@material-ui/core";
+import { prioritySchema, inputOutputSchema } from "../../validation";
+import uniqid from "uniqid";
 
 const initialState = {
   isSidebarToggled: false,
@@ -10,12 +10,14 @@ const initialState = {
       formId: "standard-required-priority",
       label: "Priority",
       isShown: false,
+      required: false,
     },
     inputOutput: {
       id: "inputOutput",
       formId: "standard-required-input-output-op",
       label: "I/O Time",
       isShown: false,
+      required: false,
     },
   },
   dataGrid: {
@@ -24,45 +26,31 @@ const initialState = {
     numberOfColumns: 0,
     columns: [
       {
-        id: Math.random(),
-        field: "col1",
-        headerName: "Column 1",
-        flex: 0.3,
+        id: "ID",
+        field: "id",
+        headerName: "Process ID",
+        flex: 0.1,
       },
       {
-        id: Math.random(),
-        field: "col2",
-        headerName: "Column 2",
-        flex: 0.3,
+        id: "arrivalTime",
+        field: "arrivalTime",
+        headerName: "Arrival Time",
+        flex: 0.1,
+      },
+      {
+        id: "cpuBurst",
+        field: "cpuBurst",
+        headerName: "CPU burst",
+        flex: 0.1,
       },
     ],
-    rows: [
-      { id: 1, col1: "1", col2: "World" },
-      { id: 2, col1: "2", col2: "is Awesome" },
-      { id: 3, col1: "3", col2: "is Amazing" },
-      { id: 4, col1: "1", col2: "World" },
-      { id: 5, col1: "2", col2: "is Awesome" },
-      { id: 6, col1: "3", col2: "is Amazing" },
-      { id: 7, col1: "1", col2: "World" },
-      { id: 8, col1: "2", col2: "is Awesome" },
-      { id: 9, col1: "3", col2: "is Amazing" },
-      { id: 10, col1: "1", col2: "World" },
-      { id: 11, col1: "2", col2: "is Awesome" },
-      { id: 12, col1: "3", col2: "is Amazing" },
-    ],
+    // row name is mapped to a field property of a column
+    rows: [],
   },
   visualizationsList: [
-    {
-      id: 1626,
-      name: "Wizualizacja 1",
-    },
     { id: 23473, name: "Wizualizacja 2" },
     { id: 3364, name: "Wizualizacja 3" },
     { id: 4737, name: "Wizualizacja 4" },
-    { id: 2344473, name: "Wizualizacja 2" },
-    { id: 337364, name: "Wizualizacja 3" },
-    { id: 473837, name: "Wizualizacja 4" },
-    { id: 238344473, name: "Wizualizacja 2" },
   ],
 };
 
@@ -74,17 +62,44 @@ const uiSlice = createSlice({
       console.log(action);
       state.isSidebarToggled = action.payload;
     },
-    toggleExtraForm: (state, action) => {
-      console.log(action.payload);
-      state.extraForms[action.payload].isShown = !state.extraForms[
-        action.payload
-      ].isShown;
-    },
     addNewColumn: (state, action) => {
-      state.dataGrid.columns.push(action.payload);
+      const { id, label } = action.payload;
+      state.extraForms[id].isShown = true;
+      state.dataGrid.columns.push({
+        id: id,
+        field: id,
+        headerName: label,
+        flex: 0.1,
+      });
+    },
+    removeColumn: (state, action) => {
+      const { id } = action.payload;
+      state.extraForms[id].isShown = false;
+
+      for (let i = 0; i < state.dataGrid.columns.length; i++) {
+        if (state.dataGrid.columns[i].id === id) {
+          state.dataGrid.columns.splice(i);
+        }
+      }
     },
     addNewRow: (state, action) => {
-      state.dataGrid.rows.push(action.payload);
+      const { arrivalTime, cpuBurst, inputOutput, priority } = action.payload;
+      const extra = {};
+      if (priority > -1) {
+        state.extraForms.priority.required = true;
+        extra.priority = priority;
+      }
+      if (inputOutput > -1) {
+        state.extraForms.inputOutput.required = true;
+        extra.inputOutput = inputOutput;
+      }
+
+      state.dataGrid.rows.push({
+        id: uniqid.process(),
+        arrivalTime,
+        cpuBurst,
+        ...extra,
+      });
     },
     setColumns: (state, action) => {
       state.dataGrid.columns = action.payload;
@@ -104,9 +119,22 @@ const uiSlice = createSlice({
           return !state.dataGrid.selectedRows.includes(String(e.id));
         });
       }
+
+      if (!state.dataGrid.rows.length) {
+        for (let key in state.extraForms) {
+          state.extraForms[key].required = false;
+        }
+      }
     },
   },
 });
+
+export const getIsExtraRequiredById = (state) => {
+  const obj = {};
+  for (let key in state.ui.extraForms)
+    obj[key] = state.ui.extraForms[key].required;
+  return obj;
+};
 
 export const getExtraFormsAsArray = createSelector(
   (state) => Object.entries(state.ui.extraForms),
@@ -114,11 +142,11 @@ export const getExtraFormsAsArray = createSelector(
 );
 
 export const getRowsSelector = createSelector(
-  (state) => state.ui.dataGrid.columns,
+  (state) => state.ui.dataGrid.rows,
   (rows) => rows
 );
 export const getColumnsSelector = createSelector(
-  (state) => state.ui.dataGrid.rows,
+  (state) => state.ui.dataGrid.columns,
   (columns) => columns
 );
 
@@ -139,10 +167,12 @@ export const getNumberOfColumns = (state) => state.ui.dataGrid.numberOfColumns;
 export default uiSlice.reducer;
 export const {
   toggleSidebar,
-  toggleExtraForm,
   setColumns,
   setRows,
   selectRows,
   deleteSelectedRows,
   resetRowSelection,
+  addNewColumn,
+  removeColumn,
+  addNewRow,
 } = uiSlice.actions;
