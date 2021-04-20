@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PaperHeader({ children, ...rest }) {
   const styles = useStyles();
-  console.log(styles);
   return (
     <Typography variant="h6" classes={{ root: styles.paperHeader }}>
       {children}

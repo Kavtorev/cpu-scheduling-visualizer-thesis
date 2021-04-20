@@ -3,7 +3,7 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 
-export default function ColumnForm({
+export default function TextInput({
   startAdornment = null,
   children = null,
   endAdornment = null,
@@ -11,8 +11,6 @@ export default function ColumnForm({
 }) {
   return (
     <TextField
-      required
-      defaultValue="0"
       InputProps={{
         startAdornment: startAdornment ? (
           startAdornment

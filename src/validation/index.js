@@ -20,7 +20,7 @@ export const arrivalTimeSchema = yup
   .required()
   .integer();
 
-export const cpuBurstSchema = yup
+export const cpuTimeSchema = yup
   .number()
   .typeError("Please provide a number.")
   .min(1)

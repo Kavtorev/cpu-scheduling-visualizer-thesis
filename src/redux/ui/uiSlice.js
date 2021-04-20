@@ -1,25 +1,8 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
-import { prioritySchema, inputOutputSchema } from "../../validation";
 import uniqid from "uniqid";
 
 const initialState = {
   isSidebarToggled: false,
-  extraForms: {
-    priority: {
-      id: "priority",
-      formId: "standard-required-priority",
-      label: "Priority",
-      isShown: false,
-      required: false,
-    },
-    inputOutput: {
-      id: "inputOutput",
-      formId: "standard-required-input-output-op",
-      label: "I/O Time",
-      isShown: false,
-      required: false,
-    },
-  },
   dataGrid: {
     selectedRows: [],
     numberOfRows: 0,
@@ -38,9 +21,9 @@ const initialState = {
         flex: 0.1,
       },
       {
-        id: "cpuBurst",
-        field: "cpuBurst",
-        headerName: "CPU burst",
+        id: "cpuTime",
+        field: "cpuTime",
+        headerName: "CPU Time",
         flex: 0.1,
       },
     ],
@@ -52,53 +35,47 @@ const initialState = {
     { id: 3364, name: "Wizualizacja 3" },
     { id: 4737, name: "Wizualizacja 4" },
   ],
+  chosenAlgorithm: "_NONE",
+  preemptive: false,
 };
 
 const uiSlice = createSlice({
   name: "ui",
   initialState: initialState,
   reducers: {
+    togglePreemptive: (state) => {
+      state.preemptive = !state.preemptive;
+    },
+    chooseAlgo: (state, action) => {
+      let { value, preemptive } = action.payload;
+
+      state.preemptive = preemptive.checked;
+      state.chosenAlgorithm = value;
+
+      if (value === "_PRIOR") {
+        state.dataGrid.columns.push({
+          id: "priority",
+          field: "priority",
+          headerName: "Priority",
+          flex: 0.1,
+        });
+      } else {
+        state.dataGrid.columns = initialState.dataGrid.columns;
+      }
+    },
     toggleSidebar: (state, action) => {
       console.log(action);
       state.isSidebarToggled = action.payload;
     },
-    addNewColumn: (state, action) => {
-      const { id, label } = action.payload;
-      state.extraForms[id].isShown = true;
-      state.dataGrid.columns.push({
-        id: id,
-        field: id,
-        headerName: label,
-        flex: 0.1,
-      });
-    },
-    removeColumn: (state, action) => {
-      const { id } = action.payload;
-      state.extraForms[id].isShown = false;
-
-      for (let i = 0; i < state.dataGrid.columns.length; i++) {
-        if (state.dataGrid.columns[i].id === id) {
-          state.dataGrid.columns.splice(i);
-        }
-      }
-    },
     addNewRow: (state, action) => {
-      const { arrivalTime, cpuBurst, inputOutput, priority } = action.payload;
-      const extra = {};
-      if (priority > -1) {
-        state.extraForms.priority.required = true;
-        extra.priority = priority;
-      }
-      if (inputOutput > -1) {
-        state.extraForms.inputOutput.required = true;
-        extra.inputOutput = inputOutput;
-      }
+      const { arrivalTime, cpuTime, priority } = action.payload;
+      console.log("works:", { arrivalTime, cpuTime, priority });
 
       state.dataGrid.rows.push({
         id: uniqid.process(),
         arrivalTime,
-        cpuBurst,
-        ...extra,
+        cpuTime,
+        priority,
       });
     },
     setColumns: (state, action) => {
@@ -129,18 +106,6 @@ const uiSlice = createSlice({
   },
 });
 
-export const getIsExtraRequiredById = (state) => {
-  const obj = {};
-  for (let key in state.ui.extraForms)
-    obj[key] = state.ui.extraForms[key].required;
-  return obj;
-};
-
-export const getExtraFormsAsArray = createSelector(
-  (state) => Object.entries(state.ui.extraForms),
-  (forms) => forms
-);
-
 export const getRowsSelector = createSelector(
   (state) => state.ui.dataGrid.rows,
   (rows) => rows
@@ -163,6 +128,8 @@ export const getVisualizations = createSelector(
 export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
 export const getNumberOfRows = (state) => state.ui.dataGrid.numberOfRows;
 export const getNumberOfColumns = (state) => state.ui.dataGrid.numberOfColumns;
+export const getChosenAlgorithm = (state) => state.ui.chosenAlgorithm;
+export const getPreemptiveToggle = (state) => state.ui.preemptive;
 
 export default uiSlice.reducer;
 export const {
@@ -172,7 +139,7 @@ export const {
   selectRows,
   deleteSelectedRows,
   resetRowSelection,
-  addNewColumn,
-  removeColumn,
   addNewRow,
+  chooseAlgo,
+  togglePreemptive,
 } = uiSlice.actions;
