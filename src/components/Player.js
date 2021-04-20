@@ -1,7 +1,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import PlayerConfigurationPanel from "./PlayerConfigurationPanel";
+import PlayerControlPanel from "./PlayerControlPanel";
 import PlayerAnimationPanel from "./PlayerAnimationPanel";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -19,7 +19,7 @@ export default function Player() {
     <Paper>
       <Grid container classes={{ root: styles.gridRoot }}>
         <Grid item xs={12}>
-          <PlayerConfigurationPanel />
+          <PlayerControlPanel />
         </Grid>
         <Grid item xs={12}>
           <PlayerAnimationPanel />

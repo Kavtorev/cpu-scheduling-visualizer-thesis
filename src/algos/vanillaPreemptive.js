@@ -1,10 +1,10 @@
 import { startFrame, finishFrame } from "./helpers/index";
 
-export default function vanillaSRF(processes, comparator, criteria) {
+export default function vanillaPreemptive({ processes, comparator, criteria }) {
   let uncompleted = processes.length;
   let readyQueue = processes.map((e) => ({ ...e })).sort(comparator);
   let previous = null;
-  let finishedLog = [];
+  let finishedSum = [];
   let clock = 0;
   let frames = [];
   let frame = startFrame(clock);
@@ -42,31 +42,27 @@ export default function vanillaSRF(processes, comparator, criteria) {
     if (previous != null) {
       if (readyQueue[previous].id !== readyQueue[curIndex].id) {
         frames.push(
-          finishFrame(
-            frame,
-            `Preempted by ${readyQueue[curIndex].value}`,
-            clock
-          )
+          finishFrame(frame, `Preempted by ${readyQueue[curIndex].name}`, clock)
         );
       }
     }
 
-    if (readyQueue[curIndex].cpuBurst === readyQueue[curIndex].cpuBurstLeft) {
+    if (readyQueue[curIndex].cpuTime === readyQueue[curIndex].cpuTimeLeft) {
       readyQueue[curIndex].responseTime =
         clock - readyQueue[curIndex].arrivalTime;
     }
 
-    readyQueue[curIndex].cpuBurstLeft -= 1;
+    readyQueue[curIndex].cpuTimeLeft -= 1;
     clock += 1;
 
-    if (!readyQueue[curIndex].cpuBurstLeft) {
+    if (!readyQueue[curIndex].cpuTimeLeft) {
       readyQueue[curIndex].turnaroundTime =
         clock - readyQueue[curIndex].arrivalTime;
       readyQueue[curIndex].waitingTime =
-        readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuBurst;
+        readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuTime;
       readyQueue[curIndex].exitTime = clock;
 
-      finishedLog.push(readyQueue[curIndex]);
+      finishedSum.push(readyQueue[curIndex]);
       frames.push(finishFrame(frame, "Finished", clock));
 
       readyQueue = readyQueue.filter((e, i) => {
@@ -81,6 +77,5 @@ export default function vanillaSRF(processes, comparator, criteria) {
     previous = curIndex;
   }
 
-  console.log("frames:", frames);
-  return finishedLog;
+  return { finishedSum, frames };
 }

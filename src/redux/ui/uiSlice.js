@@ -35,44 +35,62 @@ const initialState = {
     { id: 3364, name: "Wizualizacja 3" },
     { id: 4737, name: "Wizualizacja 4" },
   ],
-  chosenAlgorithm: "_NONE",
-  preemptive: false,
+  chosenAlgorithm: {
+    name: "_NONE",
+    preemptive: false,
+    timeQuantum: 2,
+    isError: false,
+  },
 };
 
 const uiSlice = createSlice({
   name: "ui",
   initialState: initialState,
   reducers: {
+    setTimeQuantumError: (state, action) => {
+      state.chosenAlgorithm.isError = action.payload;
+    },
+    setTimeQuantum: (state) => {
+      state.chosenAlgorithm.timeQuantum = state.payload;
+    },
     togglePreemptive: (state) => {
-      state.preemptive = !state.preemptive;
+      state.chosenAlgorithm.preemptive = !state.chosenAlgorithm.preemptive;
+      state.chosenAlgorithm.name = state.chosenAlgorithm.preemptive
+        ? "_PRIOR_PRE"
+        : "_PRIOR_NONPRE";
     },
     chooseAlgo: (state, action) => {
       let { value, preemptive } = action.payload;
 
-      state.preemptive = preemptive.checked;
-      state.chosenAlgorithm = value;
+      state.chosenAlgorithm.preemptive = preemptive.checked;
+      state.chosenAlgorithm.name = value;
 
-      if (value === "_PRIOR") {
+      if (value === "_PRIOR_PRE") {
         state.dataGrid.columns.push({
           id: "priority",
           field: "priority",
           headerName: "Priority",
           flex: 0.1,
         });
+
+        state.dataGrid.rows = [];
       } else {
         state.dataGrid.columns = initialState.dataGrid.columns;
       }
     },
     toggleSidebar: (state, action) => {
-      console.log(action);
       state.isSidebarToggled = action.payload;
     },
     addNewRow: (state, action) => {
       const { arrivalTime, cpuTime, priority } = action.payload;
-      console.log("works:", { arrivalTime, cpuTime, priority });
 
       state.dataGrid.rows.push({
         id: uniqid.process(),
+        name: `Process №${state.dataGrid.rows.length + 1}`,
+        waitingTime: 0,
+        turnaroundTime: 0,
+        responseTime: 0,
+        cpuTimeLeft: cpuTime,
         arrivalTime,
         cpuTime,
         priority,
@@ -125,11 +143,16 @@ export const getVisualizations = createSelector(
   (vis) => vis
 );
 
+export const getTimeQuantum = (state) => state.ui.chosenAlgorithm.timeQuantum;
+export const getTimeQuantumError = (state) => state.ui.chosenAlgorithm.isError;
 export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
-export const getNumberOfRows = (state) => state.ui.dataGrid.numberOfRows;
-export const getNumberOfColumns = (state) => state.ui.dataGrid.numberOfColumns;
+export const getChosenAlgorithmName = (state) => state.ui.chosenAlgorithm.name;
 export const getChosenAlgorithm = (state) => state.ui.chosenAlgorithm;
-export const getPreemptiveToggle = (state) => state.ui.preemptive;
+export const getPreemptiveToggle = (state) =>
+  state.ui.chosenAlgorithm.preemptive;
+export const getIsReadyToStart = (state) =>
+  state.ui.chosenAlgorithm.name !== "_NONE" && state.ui.dataGrid.rows.length;
+export const getRows = (state) => state.ui.dataGrid.rows;
 
 export default uiSlice.reducer;
 export const {
@@ -142,4 +165,6 @@ export const {
   addNewRow,
   chooseAlgo,
   togglePreemptive,
+  setTimeQuantum,
+  setTimeQuantumError,
 } = uiSlice.actions;

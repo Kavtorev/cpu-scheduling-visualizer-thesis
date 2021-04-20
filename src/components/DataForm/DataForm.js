@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addNewRow,
   chooseAlgo,
-  getChosenAlgorithm,
+  getChosenAlgorithmName,
   getPreemptiveToggle,
   togglePreemptive,
 } from "../../redux/ui/uiSlice";
@@ -21,8 +21,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { algorithms } from "./forms";
-
-console.log(Object.entries(algorithms));
+import TimeQuantumForm from "./TimeQuantumForm";
 
 const useStyles = makeStyles((theme) => ({
   paperRoot: {
@@ -44,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DataForm() {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const algo = useSelector(getChosenAlgorithm);
+  const algo = useSelector(getChosenAlgorithmName);
   const toggle = useSelector(getPreemptiveToggle);
 
   const handleAlgoChange = ({ target }) =>
@@ -96,6 +95,7 @@ export default function DataForm() {
                   arrivalTime: 0,
                   cpuTime: 0,
                   priority: -1,
+                  timeQuantum: -1,
                 }}
                 onSubmit={(val) => dispatch(addNewRow(val))}
               >
@@ -108,6 +108,7 @@ export default function DataForm() {
                       classes={{ root: styles.innerGridRoot }}
                     >
                       <InputsList inputs={algorithms[algo].fields} />
+                      {algo === "_RR" ? <TimeQuantumForm /> : null}
                       <Box
                         component="div"
                         item

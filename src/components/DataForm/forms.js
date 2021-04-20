@@ -53,11 +53,16 @@ export let algorithms = {
   },
   _RR: {
     label: "RR",
-    fields: [...defaultFields, timeQuantum],
+    fields: [...defaultFields],
     switchProps: { disabled: true, checked: true },
   },
-  _PRIOR: {
+  _PRIOR_PRE: {
     label: "Priority sch.",
+    fields: [...defaultFields, priority],
+    switchProps: {},
+  },
+  _PRIOR_NONPRE: {
+    label: "",
     fields: [...defaultFields, priority],
     switchProps: {},
   },

@@ -1,9 +1,10 @@
 import { startFrame, finishFrame } from "./helpers/index";
 
-export default function vanillaNonPreemptive(processes, comparator) {
+export default function vanillaNonpreemptive({ processes, comparator }) {
+  // debugger;
   let uncompleted = processes.length;
   let prcs = processes.map((e) => ({ ...e })).sort(comparator);
-  let finishedLog = [];
+  let finishedSum = [];
   let clock = 0;
   let frames = [];
   let frame = startFrame(clock);
@@ -13,17 +14,16 @@ export default function vanillaNonPreemptive(processes, comparator) {
 
     current.responseTime = clock - current.arrivalTime;
 
-    clock += current.cpuBurst;
-    current.cpuBurstLeft = 0;
+    clock += current.cpuTime;
+    current.cpuTimeLeft = 0;
 
     current.turnaroundTime = clock - current.arrivalTime;
-    current.waitingTime = current.turnaroundTime - current.cpuBurst;
+    current.waitingTime = current.turnaroundTime - current.cpuTime;
     current.exitTime = clock;
-    finishedLog.push(current);
+    finishedSum.push(current);
     frames.push(finishFrame(frame, "Finished", clock));
     uncompleted -= 1;
   }
 
-  console.log("frames:", frames);
-  return finishedLog;
+  return { finishedSum, frames };
 }

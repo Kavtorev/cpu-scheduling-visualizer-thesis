@@ -1,7 +1,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import ColumnForm from "./ColumnForm";
+import ColumnForm from "./DataForm/TextInput";
 
 import {
   AverageResponseTime,
