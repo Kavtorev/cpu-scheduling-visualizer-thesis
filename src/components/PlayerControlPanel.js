@@ -9,7 +9,7 @@ import FastRewindRoundedIcon from "@material-ui/icons/FastRewindRounded";
 import CachedRoundedIcon from "@material-ui/icons/CachedRounded";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getChosenAlgorithm,
   getIsReadyToStart,
@@ -17,6 +17,20 @@ import {
 } from "../redux/ui/uiSlice";
 import useInterval from "use-interval";
 import executeAlgo from "../algos";
+import {
+  getFrames,
+  getIsPlayable,
+  getIsStartedStoppedFinished,
+  getIsStoppableOrAccDec,
+  getSpeed,
+  start,
+  stop,
+  finish,
+  setFrames,
+  reset,
+  increaseSpeed,
+  descreaseSpeed,
+} from "../redux/player/playerSlice";
 
 const playerButtons = [
   {
@@ -60,28 +74,59 @@ const playerButtons = [
 ];
 
 export default function PlayerControlPanel() {
-  const isReady = useSelector(getIsReadyToStart);
-  const algo = useSelector(getChosenAlgorithm);
-  const processes = useSelector(getRows);
-  const delay = useState(null);
+  let dispatch = useDispatch();
+  let isReady = useSelector(getIsReadyToStart);
+  let algo = useSelector(getChosenAlgorithm);
+  let processes = useSelector(getRows);
+  let isPlayable = useSelector(getIsPlayable);
+  let isStoppable = useSelector(getIsStoppableOrAccDec);
 
-  const handleStart = (event) => {
+  let { isStarted, isStopped, isFinished } = useSelector(
+    getIsStartedStoppedFinished
+  );
+
+  let handleClick = ({ currentTarget }) => {
     if (isReady) {
-      executeAlgo(algo, processes);
+      switch (currentTarget.id) {
+        case "dSpeed":
+          if (isStoppable) {
+            dispatch(descreaseSpeed());
+          }
+          break;
+        case "sBack":
+          console.log("-spedd");
+          break;
+        case "start":
+          if (isPlayable) {
+            let { frames } = executeAlgo(algo, processes);
+            dispatch(setFrames(frames));
+            dispatch(start());
+          }
+          break;
+        case "stop":
+          if (isStoppable) {
+            dispatch(stop());
+          }
+          break;
+        case "sForward":
+          console.log("stop");
+          break;
+        case "iSpeed":
+          if (isStoppable) {
+            dispatch(increaseSpeed());
+          }
+          console.log("isSpeed");
+          break;
+        case "reset":
+          if (isFinished) {
+            dispatch(reset());
+          }
+          break;
+        default:
+          break;
+      }
     }
   };
-
-  const onClickDict = {
-    dSpeed: (event) => console.log(event.currentTarget),
-    sBack: (event) => console.log(event.currentTarget),
-    start: handleStart,
-    stop: (event) => console.log(event.currentTarget),
-    sForward: (event) => console.log(event.currentTarget),
-    iSpeed: (event) => console.log(event.currentTarget),
-    reset: (event) => console.log(event.currentTarget),
-  };
-
-  // useInterval(addNewFrame, null);
 
   return (
     <Grid container justify="center" alignItems="center">
@@ -90,10 +135,11 @@ export default function PlayerControlPanel() {
           <Grid item sx={1} key={button.id}>
             <Tooltip title={button.name} aria-label={button.name.toLowerCase()}>
               <IconButton
+                id={button.id}
                 aria-label={button.name.toLowerCase()}
                 style={{ color: `${button.color}` }}
                 size="medium"
-                onClick={onClickDict[button.id]}
+                onClick={handleClick}
               >
                 {button.icon}
               </IconButton>
