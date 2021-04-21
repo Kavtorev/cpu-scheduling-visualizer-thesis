@@ -1,5 +1,4 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
@@ -14,6 +13,9 @@ import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import Chip from "@material-ui/core/Chip";
+import { useSelector } from "react-redux";
+import { getChosenAlgorithmName } from "../redux/ui/uiSlice";
+import { getCurrentFrames } from "../redux/player/playerSlice";
 
 const useRowStyles = makeStyles({
   root: {
@@ -21,44 +23,25 @@ const useRowStyles = makeStyles({
       borderBottom: "unset",
     },
   },
+  rowRoot: {
+    "& .MuiTableCell-root": {
+      padding: 0,
+    },
+  },
 });
-
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [{ date: "76575", customerId: "41 s.", amount: "5s" }],
-  };
-}
-
-const rows = [
-  createData("Process №1", 159, 6.0, 24, 4.0, 3.99),
-  createData("Process №2", 237, 9.0, 37, 4.3, 4.99),
-  createData("Process №3", 262, 16.0, 24, 6.0, 3.79),
-  createData("Process №4", 305, 3.7, 67, 4.3, 2.5),
-  createData("Process №5", 356, 16.0, 49, 3.9, 1.5),
-];
 
 const chipMeta = [
   {
-    label: "Ready",
-    color: "#9EB75C",
+    label: "Running",
+    color: "rgba(52, 218, 25, 0.5)",
   },
   {
-    label: "Executing",
-    color: "#0066CC",
-  },
-  {
-    label: "Waiting",
-    color: "#D49C00",
+    label: "Preempted",
+    color: "rgba(220, 238, 13, 0.5)",
   },
   {
     label: "Finished",
-    color: "#D93148",
+    color: "rgba(235, 38, 61, 0.5)",
   },
 ];
 
@@ -66,6 +49,10 @@ function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
+  const algo = useSelector(getChosenAlgorithmName);
+  const chip = chipMeta.find((e) => e.label === row.state);
+
+  // console.log("ROW:", row.process);
 
   return (
     <React.Fragment>
@@ -80,10 +67,13 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.process.name}
         </TableCell>
         <TableCell align="left">
-          <Chip label="Basic" />
+          <Chip
+            label={chip.label}
+            style={{ backgroundColor: `${chip.color}` }}
+          />
         </TableCell>
       </TableRow>
       <TableRow>
@@ -92,27 +82,38 @@ function Row(props) {
             <Box margin={1}>
               <Table size="small" aria-label="purchases">
                 <TableHead>
-                  <TableRow>
+                  <TableRow classes={{ root: classes.rowRoot }}>
                     <TableCell>ID</TableCell>
                     <TableCell>Arrival Time</TableCell>
-                    <TableCell align="right">CPU burst left</TableCell>
-                    <TableCell align="right">State</TableCell>
-                    <TableCell align="right">Priority</TableCell>
+                    <TableCell align="center">CPU Time Left</TableCell>
+                    <TableCell align="center">State</TableCell>
+                    <TableCell align="center">Waiting Time</TableCell>
+                    {algo.startsWith("_PRIOR") ? (
+                      <TableCell align="right">Priority</TableCell>
+                    ) : null}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      {row.process.id}
+                    </TableCell>
+                    <TableCell align="center">
+                      {row.process.arrivalTime}
+                    </TableCell>
+                    <TableCell align="center">
+                      {row.process.cpuTimeLeft}
+                    </TableCell>
+                    <TableCell align="center">{row.state}</TableCell>
+                    <TableCell align="center">
+                      {row.process.waitingTime}
+                    </TableCell>
+                    {algo.startsWith("_PRIOR") ? (
+                      <TableCell align="center">
+                        {row.process.arrivalTime}
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                    ) : null}
+                  </TableRow>
                 </TableBody>
               </Table>
             </Box>
@@ -124,17 +125,21 @@ function Row(props) {
 }
 
 function CollapsibleTable() {
+  const currentFrames = useSelector(getCurrentFrames);
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table" size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
+            <TableCell>Logger</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
+          {currentFrames.map((frame) => (
+            <>
+              <Row key={frame.start.process.name} row={frame.start} />
+              <Row key={frame.finish.process.name} row={frame.finish} />
+            </>
           ))}
         </TableBody>
       </Table>
