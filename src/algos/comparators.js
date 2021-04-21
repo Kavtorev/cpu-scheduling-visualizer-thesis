@@ -5,8 +5,8 @@ const fifoComparator = (a, b) => {
 
 const sjfComparator = (a, b) => {
   if (b.arrivalTime === 0) return 1;
-  if (a.cpuBurst > b.cpuBurst) return 1;
-  if (a.cpuBurst === b.cpuBurst) {
+  if (a.cpuTime > b.cpuTime) return 1;
+  if (a.cpuTime === b.cpuTime) {
     if (a.arrivalTime > b.arrivalTime) return 1;
     else return -1;
   } else return -1;
