@@ -42,6 +42,5 @@ let mappedAlgos = {
 
 export default function executeAlgo(algo, processes) {
   let { sol, criteria, comparator } = mappedAlgos[algo.name];
-  console.log(sol({ ...algo, comparator, criteria, processes }));
-  return;
+  return sol({ ...algo, comparator, criteria, processes });
 }
