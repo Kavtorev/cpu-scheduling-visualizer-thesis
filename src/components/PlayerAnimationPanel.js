@@ -10,7 +10,7 @@ export default function PlayerAnimationPanel() {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <LinearProgressWithLabel value={20} />
+        <LinearProgressWithLabel />
       </Grid>
       <Grid item xs={12}>
         <PlayerMetrics />

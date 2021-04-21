@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import DataTable from "../components/DataTable";
-import DataForm from "../components/DataForm";
+import DataForm from "../components/DataForm/DataForm.js";
 import VisualizationsBoard from "../components/VisualizationsBoard";
 import Player from "../components/Player";
 import Logger from "../components/Logger";
