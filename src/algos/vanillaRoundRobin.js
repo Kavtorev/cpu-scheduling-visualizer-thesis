@@ -1,4 +1,4 @@
-import { startFrame, finishFrame } from "./helpers/index";
+import { s, f } from "./helpers/index";
 
 export default function vanillaRoundRobin({
   processes,
@@ -14,7 +14,7 @@ export default function vanillaRoundRobin({
   let finishedSum = [];
   let clock = 0;
   let frames = [];
-  let frame = startFrame(clock);
+  let frame = null;
 
   function findCurrent() {
     if (mainQueue.length) {
@@ -45,12 +45,19 @@ export default function vanillaRoundRobin({
 
     if (previous !== null) {
       if (previous.id !== current.id) {
-        frames.push(finishFrame(frame, `Preempted by ${current.name}`, clock));
+        // frames.push(f(frame, clock, `Preempted by ${current.name}`, previous));
+        frames.push(f(frame, clock, `Preempted`, previous));
+        frame = s(clock, current);
       }
     }
 
     if (current.cpuTime === current.cpuTimeLeft) {
       current.responseTime = clock - current.arrivalTime;
+      frame = s(clock, current);
+    }
+
+    if (frame === null) {
+      frame = s(clock, current);
     }
 
     if (currentCounter === timeQuantum || !current.cpuTimeLeft) {
@@ -64,8 +71,8 @@ export default function vanillaRoundRobin({
         current.exitTime = clock;
         // return values
         finishedSum.push({ ...current });
-        frames.push(finishFrame(frame, "Finished", clock));
-
+        frames.push(f(frame, clock, "Finished", current));
+        frame = null;
         uncompleted -= 1;
       }
 

@@ -17,19 +17,82 @@ export const getAverageTimes = (finishedPr) => {
   };
 };
 
+// let frame = {
+//   start: 0,
+//   finish: 0,
+//   startState: "Running",
+//   finishState: "",
+//   process: null,
+// };
+
 let frame = {
-  start: 0,
-  finish: 0,
-  startState: "running",
-  finishState: "",
+  start: {
+    time: 0,
+    state: "running",
+    process: null,
+  },
+  finish: {
+    time: 0,
+    state: "",
+    process: null,
+  },
 };
 
-export const startFrame = (clock) => {
-  return { ...frame, start: clock };
+export const startFrame = (clock, process) => {
+  return { ...frame, start: { ...frame.start, time: clock, process } };
 };
 
-export const finishFrame = (frame, state, clock) => {
-  let res = { ...frame, finishState: state, finish: clock };
-  frame.start = clock;
+export let s = (clock, process) => {
+  return {
+    start: {
+      time: clock,
+      state: "Running",
+      process: {
+        ...process,
+        // clock - time it has already worked
+        waitingTime:
+          clock - (process.cpuTime - process.cpuTimeLeft) - process.arrivalTime,
+      },
+    },
+    finish: {
+      time: 0,
+      state: "",
+      process: null,
+    },
+  };
+};
+
+export let f = (frame, clock, state, process) => {
+  return {
+    start: { ...frame.start },
+    finish: {
+      time: clock,
+      state,
+      process: {
+        ...process,
+        waitingTime: frame.start.process.waitingTime,
+      },
+    },
+  };
+};
+
+export const finishFrame = (frame, state, clock, current, previous = null) => {
+  // let res = {
+  //   ...frame,
+  //   finishState: state,
+  //   finish: clock,
+  //   process: { ...process },
+  // };
+  let res = {
+    ...frame,
+    finish: {
+      time: clock,
+      state,
+      process: { ...previous },
+    },
+  };
+  // starts again
+  frame.start.time = clock;
+
   return res;
 };

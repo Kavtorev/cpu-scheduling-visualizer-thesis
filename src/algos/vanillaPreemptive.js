@@ -1,4 +1,4 @@
-import { startFrame, finishFrame } from "./helpers/index";
+import { s, f } from "./helpers/index";
 
 export default function vanillaPreemptive({ processes, comparator, criteria }) {
   let uncompleted = processes.length;
@@ -7,7 +7,7 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
   let finishedSum = [];
   let clock = 0;
   let frames = [];
-  let frame = startFrame(clock);
+  let frame = null;
 
   function findCurrent() {
     let tPrIndex = readyQueue.findIndex((e) => {
@@ -41,15 +41,27 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
 
     if (previous != null) {
       if (readyQueue[previous].id !== readyQueue[curIndex].id) {
-        frames.push(
-          finishFrame(frame, `Preempted by ${readyQueue[curIndex].name}`, clock)
-        );
+        // frames.push(
+        //   f(
+        //     frame,
+        //     clock,
+        //     `Preempted by ${readyQueue[curIndex].name}`,
+        //     readyQueue[previous]
+        //   )
+        // );
+        frames.push(f(frame, clock, `Preempted`, readyQueue[previous]));
+        frame = s(clock, readyQueue[curIndex]);
       }
+    }
+
+    if (frame === null) {
+      frame = s(clock, readyQueue[curIndex]);
     }
 
     if (readyQueue[curIndex].cpuTime === readyQueue[curIndex].cpuTimeLeft) {
       readyQueue[curIndex].responseTime =
         clock - readyQueue[curIndex].arrivalTime;
+      frame = s(clock, readyQueue[curIndex]);
     }
 
     readyQueue[curIndex].cpuTimeLeft -= 1;
@@ -62,8 +74,11 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
         readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuTime;
       readyQueue[curIndex].exitTime = clock;
 
-      finishedSum.push(readyQueue[curIndex]);
-      frames.push(finishFrame(frame, "Finished", clock));
+      finishedSum.push({ ...readyQueue[curIndex] });
+
+      frames.push(f(frame, clock, "Finished", readyQueue[curIndex]));
+
+      frame = null;
 
       readyQueue = readyQueue.filter((e, i) => {
         return i !== curIndex;
