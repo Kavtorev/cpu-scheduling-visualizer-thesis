@@ -37,7 +37,6 @@ const initialState = {
   ],
   chosenAlgorithm: {
     name: "_NONE",
-    preemptive: false,
     timeQuantum: 2,
     isError: false,
   },
@@ -53,30 +52,25 @@ const uiSlice = createSlice({
     setTimeQuantum: (state) => {
       state.chosenAlgorithm.timeQuantum = state.payload;
     },
-    togglePreemptive: (state) => {
-      state.chosenAlgorithm.preemptive = !state.chosenAlgorithm.preemptive;
-      state.chosenAlgorithm.name = state.chosenAlgorithm.preemptive
-        ? "_PRIOR_PRE"
-        : "_PRIOR_NONPRE";
-    },
+
     chooseAlgo: (state, action) => {
-      let { value, preemptive } = action.payload;
-
-      state.chosenAlgorithm.preemptive = preemptive.checked;
-      state.chosenAlgorithm.name = value;
-
-      if (value === "_PRIOR_PRE") {
-        state.dataGrid.columns.push({
-          id: "priority",
-          field: "priority",
-          headerName: "Priority",
-          flex: 0.1,
-        });
-
-        state.dataGrid.rows = [];
+      let { value } = action.payload;
+      console.log(value);
+      if (value.startsWith("_PRIOR")) {
+        if (!state.chosenAlgorithm.name.startsWith("_PRIOR")) {
+          state.dataGrid.columns.push({
+            id: "priority",
+            field: "priority",
+            headerName: "Priority",
+            flex: 0.1,
+          });
+          state.dataGrid.rows = [];
+        }
       } else {
+        state.dataGrid.rows = [];
         state.dataGrid.columns = initialState.dataGrid.columns;
       }
+      state.chosenAlgorithm.name = value;
     },
     toggleSidebar: (state, action) => {
       state.isSidebarToggled = action.payload;

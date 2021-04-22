@@ -18,8 +18,6 @@ import {
 } from "../../redux/ui/uiSlice";
 import TextInput from "./TextInput";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import { algorithms } from "./forms";
 import TimeQuantumForm from "./TimeQuantumForm";
 
@@ -44,16 +42,13 @@ export default function DataForm() {
   const styles = useStyles();
   const dispatch = useDispatch();
   const algo = useSelector(getChosenAlgorithmName);
-  const toggle = useSelector(getPreemptiveToggle);
 
   const handleAlgoChange = ({ target }) =>
     dispatch(
       chooseAlgo({
         value: target.value,
-        preemptive: algorithms[target.value].switchProps,
       })
     );
-  const handleSwitchToggle = (event) => dispatch(togglePreemptive());
   return (
     <Paper classes={{ root: styles.paperRoot }}>
       <PaperHeader>Wybierz algorytm</PaperHeader>
@@ -62,12 +57,12 @@ export default function DataForm() {
           <TextInput
             helperText="Please select an algorithm"
             select
-            value={algo}
+            value={algo !== "_NONE" ? algo : ""}
             onChange={handleAlgoChange}
             classes={{ root: styles.algoSelectionRoot }}
           >
             {Object.entries(algorithms).map((option) => (
-              <MenuItem key={option[1].label} value={option[0]}>
+              <MenuItem key={option[0]} value={option[0]}>
                 {option[1].label}
               </MenuItem>
             ))}
@@ -75,20 +70,6 @@ export default function DataForm() {
         </Grid>
         {algo !== "_NONE" ? (
           <>
-            <Grid item lg={3}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={toggle}
-                    onChange={handleSwitchToggle}
-                    name="checkedB"
-                    color="primary"
-                    {...algorithms[algo].switchProps}
-                  />
-                }
-                label="W wyłaszczeniami"
-              />
-            </Grid>
             <Grid item xs={12} lg={12}>
               <Formik
                 initialValues={{
@@ -111,7 +92,6 @@ export default function DataForm() {
                       {algo === "_RR" ? <TimeQuantumForm /> : null}
                       <Box
                         component="div"
-                        item
                         xs={12}
                         display="flex"
                         justifyContent="right"

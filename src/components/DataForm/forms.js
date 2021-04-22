@@ -35,35 +35,29 @@ let timeQuantum = {
 let defaultFields = [arrivalTime, cpuTime];
 
 export let algorithms = {
-  _NONE: {},
+  // _NONE: {},
   _FIFO: {
     label: "FIFO",
-    fields: defaultFields,
-    switchProps: { disabled: true, checked: false },
+    fields: [...defaultFields],
   },
   _SJF: {
     label: "SJF",
-    fields: defaultFields,
-    switchProps: { disabled: true, checked: false },
+    fields: [...defaultFields],
   },
   _SRTF: {
     label: "SRTF",
-    fields: defaultFields,
-    switchProps: { disabled: true, checked: true },
+    fields: [...defaultFields],
   },
   _RR: {
     label: "RR",
     fields: [...defaultFields],
-    switchProps: { disabled: true, checked: true },
-  },
-  _PRIOR_PRE: {
-    label: "Priority sch.",
-    fields: [...defaultFields, priority],
-    switchProps: {},
   },
   _PRIOR_NONPRE: {
-    label: "",
+    label: "Priority (nonpreemptive)",
     fields: [...defaultFields, priority],
-    switchProps: {},
+  },
+  _PRIOR_PRE: {
+    label: "Priority (preemptive)",
+    fields: [...defaultFields, priority],
   },
 };
