@@ -1,5 +1,7 @@
-import { SatelliteTwoTone } from "@material-ui/icons";
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice, createAction, isAnyOf } from "@reduxjs/toolkit";
+
+export const startAction = createAction("start");
+export const animateAction = createAction("animate");
 
 let initialState = {
   index: 0,
@@ -9,17 +11,16 @@ let initialState = {
   speed: null,
   animFrames: [],
   currentFrames: [],
+  individualMetrics: {},
+  aResponseTime: 0,
+  aWaitingTime: 0,
+  aTurnaroundTime: 0,
 };
 
 let playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
-    start: (state, action) => {
-      state.isStarted = true;
-      state.isStopped = false;
-      state.speed = 1000;
-    },
     stop: (state, action) => {
       state.isStarted = false;
       state.isStopped = true;
@@ -34,11 +35,6 @@ let playerSlice = createSlice({
     setFrames: (state, action) => {
       state.animFrames = action.payload;
     },
-    animate: (state, action) => {
-      let index = action.payload;
-      state.currentFrames = state.currentFrames.concat(state.animFrames[index]);
-      state.index += 1;
-    },
     stepBack: (state, action) => {},
     stepForward: (state, action) => {},
     reset: (state, action) => {
@@ -48,6 +44,10 @@ let playerSlice = createSlice({
       state.speed = null;
       state.currentFrames = [];
       state.index = 0;
+      state.aResponseTime = 0;
+      state.aWaitingTime = 0;
+      state.aTurnaroundTime = 0;
+      state.individualMetrics = {};
     },
     increaseSpeed: (state, action) => {
       if (state.speed > 200) state.speed = state.speed - 300;
@@ -56,10 +56,65 @@ let playerSlice = createSlice({
       if (state.speed < 1000) state.speed = state.speed + 300;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(startAction, (state, action) => {
+      state.speed = 1000;
+      state.isStarted = true;
+      state.isStopped = false;
+    });
+    builder.addMatcher(isAnyOf(animateAction, startAction), (state, action) => {
+      // default value on the initial frame.
+      let index = action.payload || 0;
+      let frame = state.animFrames[index];
+      let processStart = frame.start.process;
+      let processIdStart = processStart.id;
+      let processEnd = frame.finish.process;
+
+      state.currentFrames = state.currentFrames.concat(frame);
+      state.index += 1;
+
+      if (!state.isFinished) {
+        if (state.individualMetrics[processIdStart] === undefined)
+          state.individualMetrics[processIdStart] = {};
+
+        let metricMap = state.individualMetrics[processIdStart];
+
+        if (metricMap.responseTime === undefined) {
+          metricMap.responseTime = processStart.responseTime;
+        }
+
+        if (frame.finish.state === "Finished") {
+          metricMap.turnaroundTime = processEnd.turnaroundTime;
+        }
+
+        metricMap.waitingTime = processStart.waitingTime;
+      }
+      let sumT, sumW, sumR;
+      sumT = sumW = sumR = 0;
+      for (let key in state.individualMetrics) {
+        sumR += state.individualMetrics[key].responseTime;
+        sumT += state.individualMetrics[key].turnaroundTime || 0;
+        sumW += state.individualMetrics[key].waitingTime;
+      }
+
+      let len = Object.keys(state.individualMetrics).length;
+      // console.log(
+      //   "responseA",
+      //   sumR / len,
+      //   "waitingA",
+      //   sumW / len,
+      //   "turnaroundA",
+      //   sumT / len
+      // );
+
+      state.aResponseTime = sumR / len;
+      state.aWaitingTime = sumW / len;
+      state.aTurnaroundTime = sumT / len;
+    });
+  },
 });
 
 export let {
-  start,
   stop,
   finish,
   stepBack,
@@ -68,8 +123,15 @@ export let {
   increaseSpeed,
   descreaseSpeed,
   setFrames,
-  animate,
 } = playerSlice.actions;
+
+export const getMetrics = (state) => [
+  state.player.aTurnaroundTime,
+  state.player.aWaitingTime,
+  state.player.aResponseTime,
+];
+
+export const getIsInitial = (state) => state.player.isInitial;
 
 export const getIsPlayable = (state) =>
   !state.player.isStarted || state.player.isFinished;
