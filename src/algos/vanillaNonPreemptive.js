@@ -1,7 +1,6 @@
-import { startFrame, finishFrame, f, s } from "./helpers/index";
+import { f, s } from "./helpers/index";
 
 export default function vanillaNonpreemptive({ processes, comparator }) {
-  // debugger;
   let uncompleted = processes.length;
   let prcs = processes.map((e) => ({ ...e })).sort(comparator);
   let finishedSum = [];
@@ -9,11 +8,14 @@ export default function vanillaNonpreemptive({ processes, comparator }) {
   let frames = [];
   let frame = null;
 
+  for (let b of prcs) {
+    console.log(processes);
+  }
+
   while (uncompleted) {
     let current = prcs.shift();
-
     if (current.arrivalTime > clock) {
-      clock = clock + (clock - current.arrivalTime);
+      clock += current.arrivalTime - clock;
     }
 
     current.responseTime = clock - current.arrivalTime;
