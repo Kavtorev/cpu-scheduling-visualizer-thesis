@@ -137,8 +137,8 @@ function CollapsibleTable() {
         <TableBody>
           {currentFrames.map((frame) => (
             <>
-              <Row key={frame.start.process.name} row={frame.start} />
-              <Row key={frame.finish.process.name} row={frame.finish} />
+              <Row key={Math.random() + Date.now()} row={frame.start} />
+              <Row key={Math.random() + Date.now()} row={frame.finish} />
             </>
           ))}
         </TableBody>
