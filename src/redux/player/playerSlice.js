@@ -70,18 +70,21 @@ let playerSlice = createSlice({
       state.speed = 1000;
     });
 
-    builder.addMatcher(isAnyOf(restartAction, resetAction), (state, action) => {
-      state.currentFrames = [];
-      state.index = 0;
-      state.aResponseTime = 0;
-      state.aWaitingTime = 0;
-      state.aTurnaroundTime = 0;
-      state.individualMetrics = {};
-      state.isFinished = false;
-    });
+    builder.addMatcher(
+      isAnyOf(restartAction, resetAction, startAction),
+      (state, action) => {
+        state.currentFrames = [];
+        state.index = 0;
+        state.aResponseTime = 0;
+        state.aWaitingTime = 0;
+        state.aTurnaroundTime = 0;
+        state.individualMetrics = {};
+        state.isFinished = false;
+      }
+    );
 
     builder.addMatcher(
-      isAnyOf(animateAction, startAction, restartAction),
+      isAnyOf(animateAction, restartAction),
       (state, action) => {
         // default value on the initial frame.
         let index = action.payload || 0;
@@ -143,7 +146,7 @@ export const getIsStartVisible = (state) =>
 export const getIsStopVisible = (state) => !state.player.isStopped;
 export const getIsResumeVisible = (state) =>
   state.player.isStarted && state.player.isStopped;
-export const getIsResetVisible = (state) => state.player.isFinished;
+export const getIsRestartVisible = (state) => state.player.isFinished;
 
 export const getIsDeAcceleratable = (state) => state.player.isStarted;
 

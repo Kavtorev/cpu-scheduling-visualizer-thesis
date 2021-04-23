@@ -50,9 +50,6 @@ export default function DataForm() {
         value: target.value,
       })
     );
-
-    // playerSlice
-    dispatch(resetAction());
   };
 
   return (

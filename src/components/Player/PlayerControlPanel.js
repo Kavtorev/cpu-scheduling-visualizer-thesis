@@ -19,7 +19,7 @@ import executeAlgo from "../../algos/";
 import {
   getIsDeAcceleratable,
   getIsStartVisible,
-  getIsResetVisible,
+  getIsRestartVisible,
   getIsResumeVisible,
   getIsStopVisible,
   startAction,
@@ -39,7 +39,7 @@ export default function PlayerControlPanel() {
   let isStartVisible = useSelector(getIsStartVisible);
   let isResumeVisible = useSelector(getIsResumeVisible);
   let isStopVisible = useSelector(getIsStopVisible);
-  let isResetVisible = useSelector(getIsResetVisible);
+  let isRestartVisible = useSelector(getIsRestartVisible);
   let isDeAcceleratable = useSelector(getIsDeAcceleratable);
 
   const playerButtons = [
@@ -60,10 +60,10 @@ export default function PlayerControlPanel() {
     {
       id: "start",
       name: "Start",
-      icon: <PlayArrowRoundedIcon />,
+      icon: isStartVisible ? <PlayArrowRoundedIcon /> : <CachedRoundedIcon />,
       color: "#0066CC",
       style: {
-        display: isStartVisible ? "block" : "none",
+        display: isStartVisible || isRestartVisible ? "block" : "none",
       },
     },
     {
@@ -75,15 +75,15 @@ export default function PlayerControlPanel() {
         display: isResumeVisible ? "block" : "none",
       },
     },
-    {
-      id: "restart",
-      name: "Restart",
-      icon: <CachedRoundedIcon />,
-      color: "#C11D1C",
-      style: {
-        display: isResetVisible ? "block" : "none",
-      },
-    },
+    // {
+    //   id: "restart",
+    //   name: "Restart",
+    //   icon: <CachedRoundedIcon />,
+    //   color: "#C11D1C",
+    //   style: {
+    //     display: isRestartVisible ? "block" : "none",
+    //   },
+    // },
     {
       id: "stop",
       name: "Stop",

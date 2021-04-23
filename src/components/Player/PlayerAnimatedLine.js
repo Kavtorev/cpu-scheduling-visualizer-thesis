@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PlayerAnimatedLine() {
-  const styles = useStyles();
   const dispatch = useDispatch();
   let speed = useSelector(getSpeed);
   let frames = useSelector(getFrames);
