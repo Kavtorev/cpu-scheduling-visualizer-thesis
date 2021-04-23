@@ -1,0 +1,7 @@
+.scroll-container {
+  display: flex;
+}
+
+.scroll-container .MuiGrid-item {
+  padding: 4px;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography } from "@material-ui/core";
@@ -10,11 +10,13 @@ import {
   getIsStartedStoppedFinished,
   getSpeed,
   getIndex,
-  animate,
+  animateAction,
   getCurrentFrames,
-} from "../redux/player/playerSlice";
+} from "../../redux/player/playerSlice";
 import useInterval from "use-interval";
 import { useTransition, animated } from "react-spring";
+import ScrollContainer from "react-indiana-drag-scroll";
+import "./ScrollContainer.css";
 
 const useStyles = makeStyles((theme) => ({
   gridRoot: {
@@ -57,15 +59,18 @@ export default function PlayerAnimatedLine() {
   let handleFramePush = () => {
     if (!isFinished) {
       if (frames.length && index < frames.length) {
-        dispatch(animate(index));
+        dispatch(animateAction(index));
       } else dispatch(finish());
     }
   };
-
   useInterval(handleFramePush, speed);
-  console.log("items:", items);
+
   return (
-    <Grid container spacing={1} classes={{ root: styles.gridRoot }} mt={3}>
+    <ScrollContainer
+      className="scroll-container"
+      vertical={false}
+      hideScrollbars={false}
+    >
       {transition(
         (prop, item) =>
           item && (
@@ -84,7 +89,7 @@ export default function PlayerAnimatedLine() {
                 }}
               >
                 <Box flex="1" display="flex" alignItems="center">
-                  <Typography>{item.start.process.name}</Typography>
+                  <Typography>{item.start.process.id}</Typography>
                 </Box>
                 <Box>
                   <Timeline start={item.start.time} finish={item.finish.time} />
@@ -93,6 +98,6 @@ export default function PlayerAnimatedLine() {
             </Grid>
           )
       )}
-    </Grid>
+    </ScrollContainer>
   );
 }

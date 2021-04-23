@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
 import StopRoundedIcon from "@material-ui/icons/StopRounded";
@@ -14,23 +14,19 @@ import {
   getChosenAlgorithm,
   getIsReadyToStart,
   getRows,
-} from "../redux/ui/uiSlice";
-import useInterval from "use-interval";
-import executeAlgo from "../algos";
+} from "../../redux/ui/uiSlice";
+import executeAlgo from "../../algos/";
 import {
-  getFrames,
   getIsPlayable,
   getIsStartedStoppedFinished,
   getIsStoppableOrAccDec,
-  getSpeed,
-  start,
+  startAction,
   stop,
-  finish,
   setFrames,
   reset,
   increaseSpeed,
   descreaseSpeed,
-} from "../redux/player/playerSlice";
+} from "../../redux/player/playerSlice";
 
 const playerButtons = [
   {
@@ -94,13 +90,17 @@ export default function PlayerControlPanel() {
           }
           break;
         case "sBack":
-          console.log("-spedd");
           break;
         case "start":
           if (isPlayable) {
             let { frames } = executeAlgo(algo, processes);
+            // for (let fr of frames) {
+            //   // console.log("Start time", fr.start.time);
+            //   // console.log("Finish time", fr.finish.time);
+            //   console.log(fr.start.process.name);
+            // }
             dispatch(setFrames(frames));
-            dispatch(start());
+            dispatch(startAction());
           }
           break;
         case "stop":
@@ -109,13 +109,11 @@ export default function PlayerControlPanel() {
           }
           break;
         case "sForward":
-          console.log("stop");
           break;
         case "iSpeed":
           if (isStoppable) {
             dispatch(increaseSpeed());
           }
-          console.log("isSpeed");
           break;
         case "reset":
           if (isFinished) {

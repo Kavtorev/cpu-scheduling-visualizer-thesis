@@ -3,7 +3,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { useSelector } from "react-redux";
-import { getIndex, getNumberOfFrames } from "../redux/player/playerSlice";
+import { getIndex, getNumberOfFrames } from "../../redux/player/playerSlice";
 
 export default function LinearProgressWithLabel(props) {
   const index = useSelector(getIndex);

@@ -1,14 +1,14 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import ColumnForm from "./DataForm/TextInput";
+import ColumnForm from "../DataForm/TextInput";
 import {
   AverageResponseTime,
   AverageWaitingIcon,
   AverageTurnaroundIcon,
 } from "./PlayerMetricsIcons";
 import { useSelector } from "react-redux";
-import { getMetrics } from "../redux/player/playerSlice";
+import { getMetrics } from "../../redux/player/playerSlice";
 
 const useStyles = makeStyles((theme) => ({
   metricFormRoot: {
