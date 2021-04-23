@@ -1,4 +1,5 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { getRandomInt } from "../../lib/utils";
 import uniqid from "uniqid";
 
 const initialState = {
@@ -46,16 +47,40 @@ const uiSlice = createSlice({
   name: "ui",
   initialState: initialState,
   reducers: {
+    generateData: (state, action) => {
+      let { rowsNumber } = action.payload;
+      let cpuTime, arrivalTime, priority;
+      let rows = [];
+
+      for (let index = 0; index < rowsNumber; index++) {
+        cpuTime = getRandomInt(1, 20);
+        arrivalTime = getRandomInt(0, rowsNumber);
+        priority = getRandomInt(1, rowsNumber);
+
+        rows.push({
+          id: uniqid.process(),
+          name: `Process №${index + 1}`,
+          waitingTime: 0,
+          turnaroundTime: 0,
+          responseTime: 0,
+          cpuTimeLeft: cpuTime,
+          arrivalTime,
+          cpuTime,
+          priority,
+        });
+      }
+
+      state.dataGrid.rows = rows;
+    },
     setTimeQuantumError: (state, action) => {
       state.chosenAlgorithm.isError = action.payload;
     },
     setTimeQuantum: (state, action) => {
-      state.chosenAlgorithm.timeQuantum = action.payload;
+      state.chosenAlgorithm.timeQuantum = Number(action.payload);
     },
 
     chooseAlgo: (state, action) => {
       let { value } = action.payload;
-      console.log(value);
       if (value.startsWith("_PRIOR")) {
         if (!state.chosenAlgorithm.name.startsWith("_PRIOR")) {
           state.dataGrid.columns.push({
@@ -64,10 +89,11 @@ const uiSlice = createSlice({
             headerName: "Priority",
             flex: 0.1,
           });
+
+          // mb generate random priorities in the future...
           state.dataGrid.rows = [];
         }
       } else {
-        state.dataGrid.rows = [];
         state.dataGrid.columns = initialState.dataGrid.columns;
       }
       state.chosenAlgorithm.name = value;
@@ -150,6 +176,7 @@ export const getRows = (state) => state.ui.dataGrid.rows;
 
 export default uiSlice.reducer;
 export const {
+  generateData,
   toggleSidebar,
   setColumns,
   setRows,
