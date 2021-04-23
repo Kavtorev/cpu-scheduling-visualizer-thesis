@@ -6,7 +6,7 @@ import TextInput from "./TextInput";
 
 export default function InputItem({ el }) {
   return (
-    <Grid item xs={12} sm={6} md={3}>
+    <Grid item xs={12} md={4}>
       <Field name={el.name} validate={validate(el.schema)}>
         {({ field, form: { touched, errors }, meta }) => (
           <TextInput
@@ -18,6 +18,7 @@ export default function InputItem({ el }) {
             error={meta.touched && Boolean(meta.error)}
             helperText={meta.touched && meta.error}
             required
+            variant="outlined"
             type="number"
           />
         )}

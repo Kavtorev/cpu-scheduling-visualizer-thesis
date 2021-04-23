@@ -1,4 +1,4 @@
-import React, { useRef, memo } from "react";
+import React, { memo } from "react";
 import { GridToolbarContainer } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";

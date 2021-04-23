@@ -9,7 +9,7 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
   let frames = [];
   let frame = null;
 
-  function findCurrent() {
+  let findCurrent = () => {
     let tPrIndex = readyQueue.findIndex((e) => {
       return e.arrivalTime <= clock;
     });
@@ -30,7 +30,7 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
     }
 
     return tPrIndex;
-  }
+  };
 
   while (uncompleted) {
     let curIndex = findCurrent();
@@ -41,14 +41,6 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
 
     if (previous != null) {
       if (readyQueue[previous].id !== readyQueue[curIndex].id) {
-        // frames.push(
-        //   f(
-        //     frame,
-        //     clock,
-        //     `Preempted by ${readyQueue[curIndex].name}`,
-        //     readyQueue[previous]
-        //   )
-        // );
         frames.push(f(frame, clock, `Preempted`, readyQueue[previous]));
         frame = s(clock, readyQueue[curIndex]);
       }

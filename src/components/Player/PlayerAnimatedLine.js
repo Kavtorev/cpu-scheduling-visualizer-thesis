@@ -41,14 +41,12 @@ export default function PlayerAnimatedLine() {
   let index = useSelector(getIndex);
   let items = useSelector(getCurrentFrames);
 
-  let { isStarted, isStopped, isFinished } = useSelector(
-    getIsStartedStoppedFinished
-  );
+  let { isFinished } = useSelector(getIsStartedStoppedFinished);
 
   let transition = useTransition(items, {
     onPause: () => console.log("paused?"),
     config: {
-      duration: 1000,
+      duration: 500,
     },
     keys: items.map((el, index) => el),
     from: { opacity: "0", transform: "translate(15px, 0)" },

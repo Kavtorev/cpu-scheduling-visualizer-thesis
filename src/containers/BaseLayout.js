@@ -5,7 +5,7 @@ import Box from "@material-ui/core/Box";
 import DataTable from "../components/DataTable";
 import DataForm from "../components/DataForm/DataForm.js";
 import VisualizationsBoard from "../components/VisualizationsBoard";
-import Player from "../components/Player";
+import Player from "../components/Player/Player.js";
 import Logger from "../components/Logger";
 
 const useStyles = makeStyles((theme) => ({

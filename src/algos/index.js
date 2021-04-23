@@ -1,11 +1,7 @@
 import vanillaRoundRobin from "./vanillaRoundRobin";
 import vanillaNonpreemptive from "./vanillaNonpreemptive";
 import vanillaPreemptive from "./vanillaPreemptive";
-import {
-  fifoComparator,
-  sjfComparator,
-  priorityComparator,
-} from "./comparators";
+import { fifoComparator } from "./comparators";
 
 let mappedAlgos = {
   _FIFO: {
@@ -15,8 +11,8 @@ let mappedAlgos = {
   },
   _SJF: {
     sol: vanillaNonpreemptive,
-    comparator: sjfComparator,
-    criteria: "",
+    comparator: fifoComparator,
+    criteria: "cpuTimeLeft",
   },
   _SRTF: {
     sol: vanillaPreemptive,
@@ -30,8 +26,8 @@ let mappedAlgos = {
   },
   _PRIOR_NONPRE: {
     sol: vanillaNonpreemptive,
-    comparator: priorityComparator,
-    criteria: "",
+    comparator: fifoComparator,
+    criteria: "priority",
   },
   _RR: {
     sol: vanillaRoundRobin,

@@ -44,7 +44,6 @@ export default function vanillaRoundRobin({
     }
   }
   while (uncompleted) {
-    debugger;
     current = findCurrent();
 
     if (current === null) {
