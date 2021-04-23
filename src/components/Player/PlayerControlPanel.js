@@ -17,108 +17,128 @@ import {
 } from "../../redux/ui/uiSlice";
 import executeAlgo from "../../algos/";
 import {
-  getIsPlayable,
-  getIsStartedStoppedFinished,
-  getIsStoppableOrAccDec,
+  getIsDeAcceleratable,
+  getIsStartVisible,
+  getIsResetVisible,
+  getIsResumeVisible,
+  getIsStopVisible,
   startAction,
   stop,
   setFrames,
-  reset,
+  resume,
   increaseSpeed,
   descreaseSpeed,
+  restartAction,
 } from "../../redux/player/playerSlice";
-
-const playerButtons = [
-  {
-    id: "dSpeed",
-    name: "Decrease speed",
-    icon: <FastRewindRoundedIcon />,
-    color: "#447579",
-  },
-  {
-    id: "sBack",
-    name: "Step Back",
-    icon: <RestoreRoundedIcon />,
-    color: "#5D6395",
-  },
-  {
-    id: "start",
-    name: "Start",
-    icon: <PlayArrowRoundedIcon />,
-    color: "#0066CC",
-  },
-  { id: "stop", name: "Stop", icon: <StopRoundedIcon />, color: "#D93148" },
-  {
-    id: "sForward",
-    name: "Step Forward",
-    icon: <UpdateRoundedIcon />,
-    color: "#A9CB6C",
-  },
-  {
-    id: "iSpeed",
-    name: "Increase speed",
-    icon: <FastForwardRoundedIcon />,
-    color: "#447579",
-  },
-
-  {
-    id: "reset",
-    name: "Reset",
-    icon: <CachedRoundedIcon />,
-    color: "#C11D1C",
-  },
-];
 
 export default function PlayerControlPanel() {
   let dispatch = useDispatch();
   let isReady = useSelector(getIsReadyToStart);
   let algo = useSelector(getChosenAlgorithm);
   let processes = useSelector(getRows);
-  let isPlayable = useSelector(getIsPlayable);
-  let isStoppable = useSelector(getIsStoppableOrAccDec);
+  let isStartVisible = useSelector(getIsStartVisible);
+  let isResumeVisible = useSelector(getIsResumeVisible);
+  let isStopVisible = useSelector(getIsStopVisible);
+  let isResetVisible = useSelector(getIsResetVisible);
+  let isDeAcceleratable = useSelector(getIsDeAcceleratable);
 
-  let { isStarted, isStopped, isFinished } = useSelector(
-    getIsStartedStoppedFinished
-  );
+  const playerButtons = [
+    {
+      id: "dSpeed",
+      name: "Decrease speed",
+      icon: <FastRewindRoundedIcon />,
+      color: "#447579",
+      style: {},
+    },
+    {
+      id: "sBack",
+      name: "Step Back",
+      icon: <RestoreRoundedIcon />,
+      color: "#5D6395",
+      style: {},
+    },
+    {
+      id: "start",
+      name: "Start",
+      icon: <PlayArrowRoundedIcon />,
+      color: "#0066CC",
+      style: {
+        display: isStartVisible ? "block" : "none",
+      },
+    },
+    {
+      id: "resume",
+      name: "Resume",
+      icon: <PlayArrowRoundedIcon />,
+      color: "#0066CC",
+      style: {
+        display: isResumeVisible ? "block" : "none",
+      },
+    },
+    {
+      id: "restart",
+      name: "Restart",
+      icon: <CachedRoundedIcon />,
+      color: "#C11D1C",
+      style: {
+        display: isResetVisible ? "block" : "none",
+      },
+    },
+    {
+      id: "stop",
+      name: "Stop",
+      icon: <StopRoundedIcon />,
+      color: "#D93148",
+      style: {
+        display: isStopVisible ? "block" : "none",
+      },
+    },
+    {
+      id: "sForward",
+      name: "Step Forward",
+      icon: <UpdateRoundedIcon />,
+      color: "#A9CB6C",
+      style: {},
+    },
+    {
+      id: "iSpeed",
+      name: "Increase speed",
+      icon: <FastForwardRoundedIcon />,
+      color: "#447579",
+      style: {},
+    },
+  ];
 
   let handleClick = ({ currentTarget }) => {
     if (isReady) {
       switch (currentTarget.id) {
         case "dSpeed":
-          if (isStoppable) {
+          if (isDeAcceleratable) {
             dispatch(descreaseSpeed());
           }
           break;
         case "sBack":
           break;
         case "start":
-          if (isPlayable) {
-            let { frames } = executeAlgo(algo, processes);
-            // for (let fr of frames) {
-            //   // console.log("Start time", fr.start.time);
-            //   // console.log("Finish time", fr.finish.time);
-            //   console.log(fr.start.process.name);
-            // }
-            dispatch(setFrames(frames));
-            dispatch(startAction());
-          }
+          let { frames } = executeAlgo(algo, processes);
+          dispatch(setFrames(frames));
+          dispatch(startAction());
+          break;
+        case "resume":
+          dispatch(resume());
           break;
         case "stop":
-          if (isStoppable) {
-            dispatch(stop());
-          }
+          dispatch(stop());
           break;
         case "sForward":
           break;
         case "iSpeed":
-          if (isStoppable) {
+          if (isDeAcceleratable) {
             dispatch(increaseSpeed());
           }
           break;
-        case "reset":
-          if (isFinished) {
-            dispatch(reset());
-          }
+        case "restart":
+          dispatch(restartAction());
           break;
         default:
           break;
@@ -130,7 +150,7 @@ export default function PlayerControlPanel() {
     <Grid container justify="center" alignItems="center">
       {playerButtons.map((button) => {
         return (
-          <Grid item sx={1} key={button.id}>
+          <Grid item sx={1} key={button.id} style={button.style}>
             <Tooltip title={button.name} aria-label={button.name.toLowerCase()}>
               <IconButton
                 id={button.id}
