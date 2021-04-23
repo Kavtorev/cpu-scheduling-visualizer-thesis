@@ -13,8 +13,8 @@ import {
   addNewRow,
   chooseAlgo,
   getChosenAlgorithmName,
-  generateData,
 } from "../../redux/ui/uiSlice";
+import { resetAction } from "../../redux/player/playerSlice";
 import TextInput from "./TextInput";
 import MenuItem from "@material-ui/core/MenuItem";
 import { algorithms } from "./forms";
@@ -44,12 +44,16 @@ export default function DataForm() {
   const dispatch = useDispatch();
   const algo = useSelector(getChosenAlgorithmName);
 
-  const handleAlgoChange = ({ target }) =>
+  const handleAlgoChange = ({ target }) => {
     dispatch(
       chooseAlgo({
         value: target.value,
       })
     );
+
+    // playerSlice
+    dispatch(resetAction());
+  };
 
   return (
     <Paper classes={{ root: styles.paperRoot }}>
