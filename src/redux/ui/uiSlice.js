@@ -49,8 +49,8 @@ const uiSlice = createSlice({
     setTimeQuantumError: (state, action) => {
       state.chosenAlgorithm.isError = action.payload;
     },
-    setTimeQuantum: (state) => {
-      state.chosenAlgorithm.timeQuantum = state.payload;
+    setTimeQuantum: (state, action) => {
+      state.chosenAlgorithm.timeQuantum = action.payload;
     },
 
     chooseAlgo: (state, action) => {
