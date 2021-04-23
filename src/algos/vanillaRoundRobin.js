@@ -18,25 +18,33 @@ export default function vanillaRoundRobin({
 
   function findCurrent() {
     if (mainQueue.length) {
-      if (mainQueue[0].arrivalTime === clock) {
+      if (
+        mainQueue[0].arrivalTime === clock ||
+        mainQueue[0].arrivalTime < clock
+      ) {
         readyQueue.push(mainQueue.shift());
       }
     }
 
+    // hasn't exceeded the time quantum yet
     if (current !== null) {
       return current;
     }
 
+    // exceeded the time quantum
     if (current === null) {
+      // any ready processes
       if (readyQueue.length) {
         current = readyQueue.shift();
         return current;
       }
+      // moving in time
       clock += 1;
       return null;
     }
   }
   while (uncompleted) {
+    debugger;
     current = findCurrent();
 
     if (current === null) {
