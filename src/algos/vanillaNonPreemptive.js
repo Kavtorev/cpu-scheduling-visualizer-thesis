@@ -1,39 +1,71 @@
 import { f, s } from "./helpers/index";
 
-export default function vanillaNonpreemptive({ processes, comparator }) {
+export default function vanillaNonpreemptive({
+  processes,
+  comparator,
+  criteria,
+}) {
   let uncompleted = processes.length;
-  let prcs = processes.map((e) => ({ ...e })).sort(comparator);
-  let finishedSum = [];
+  let readyQueue = processes.map((e) => ({ ...e })).sort(comparator);
+  let finishedLog = [];
   let clock = 0;
   let frames = [];
   let frame = null;
 
-  for (let b of prcs) {
-    console.log(processes);
-  }
+  let findCurrent = () => {
+    let tPrIndex = readyQueue.findIndex((e) => {
+      return e.arrivalTime <= clock;
+    });
 
-  while (uncompleted) {
-    let current = prcs.shift();
-    if (current.arrivalTime > clock) {
-      clock += current.arrivalTime - clock;
+    if (tPrIndex < 0) {
+      clock += 1;
+      return null;
     }
 
-    current.responseTime = clock - current.arrivalTime;
+    for (let pId = 0; pId < readyQueue.length; pId++) {
+      if (readyQueue[pId].arrivalTime <= clock) {
+        if (readyQueue[pId][criteria] < readyQueue[tPrIndex][criteria]) {
+          tPrIndex = pId;
+        }
+      } else {
+        break;
+      }
+    }
 
-    frame = s(clock, current);
+    return tPrIndex;
+  };
 
-    clock += current.cpuTime;
-    current.cpuTimeLeft = 0;
+  while (uncompleted) {
+    const curIndex = findCurrent();
 
-    current.turnaroundTime = clock - current.arrivalTime;
-    current.waitingTime = current.turnaroundTime - current.cpuTime;
-    current.exitTime = clock;
+    if (curIndex === null) {
+      continue;
+    }
 
-    finishedSum.push(current);
-    frames.push(f(frame, clock, "Finished", current));
+    readyQueue[curIndex].responseTime = clock;
+    frame = s(clock, readyQueue[curIndex]);
+
+    clock += readyQueue[curIndex].cpuTime;
+    readyQueue[curIndex].cpuTimeLeft = 0;
+
+    // turnarounTime
+    readyQueue[curIndex].turnaroundTime =
+      clock - readyQueue[curIndex].arrivalTime;
+    // waitingTime
+    readyQueue[curIndex].waitingTime =
+      readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuTime;
+    // exitTime
+    readyQueue[curIndex].exitTime = clock;
+
+    finishedLog.push(readyQueue[curIndex]);
+    frames.push(f(frame, clock, "Finished", readyQueue[curIndex]));
+
+    readyQueue = readyQueue.filter((e, i) => {
+      return i !== curIndex;
+    });
 
     uncompleted -= 1;
   }
 
-  return { finishedSum, frames };
+  return { finishedLog, frames };
 }
