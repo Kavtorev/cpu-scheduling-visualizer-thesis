@@ -135,11 +135,11 @@ function CollapsibleTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {currentFrames.map((frame) => (
-            <>
-              <Row key={Math.random() + Date.now()} row={frame.start} />
-              <Row key={Math.random() + Date.now()} row={frame.finish} />
-            </>
+          {currentFrames.map((frame, index) => (
+            <React.Fragment key={Math.random() + Date.now() + index}>
+              <Row row={frame.start} />
+              <Row row={frame.finish} />
+            </React.Fragment>
           ))}
         </TableBody>
       </Table>
