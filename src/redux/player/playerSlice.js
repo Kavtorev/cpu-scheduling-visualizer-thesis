@@ -142,34 +142,44 @@ export let {
 } = playerSlice.actions;
 
 export const getIsStartVisible = (state) =>
-  !state.player.isStarted && !state.player.isFinished;
-export const getIsStopVisible = (state) => !state.player.isStopped;
+  !state.player.present.isStarted && !state.player.present.isFinished;
+export const getIsStopVisible = (state) => !state.player.present.isStopped;
 export const getIsResumeVisible = (state) =>
-  state.player.isStarted && state.player.isStopped;
-export const getIsRestartVisible = (state) => state.player.isFinished;
+  state.player.present.isStarted && state.player.present.isStopped;
+export const getIsRestartVisible = (state) => state.player.present.isFinished;
 
-export const getIsDeAcceleratable = (state) => state.player.isStarted;
+export const getIsDeAcceleratable = (state) => state.player.present.isStarted;
 
 export const getMetrics = (state) => [
-  state.player.aTurnaroundTime,
-  state.player.aWaitingTime,
-  state.player.aResponseTime,
+  state.player.present.aTurnaroundTime,
+  state.player.present.aWaitingTime,
+  state.player.present.aResponseTime,
 ];
 
-export const getIsCapableBackForward = (state) => state.player.isFinished;
+export const getIsCapableBackForward = (state) =>
+  state.player.present.isFinished;
 
 export const getIsStartedStoppedFinished = (state) => {
-  let { isStarted, isFinished, isStopped } = state.player;
+  let { isStarted, isFinished, isStopped } = state.player.present;
   return { isStarted, isFinished, isStopped };
 };
 
-export const getNumberOfFrames = (state) => state.player.animFrames.length;
+export const getNumberOfFrames = (state) =>
+  state.player.present.animFrames.length;
 
 export const getSpeed = (state) =>
-  state.player.isStarted ? state.player.speed : null;
+  state.player.present.isStarted ? state.player.present.speed : null;
 
-export const getFrames = (state) => state.player.animFrames;
+export const getFutureFramesLength = (state) => {
+  if (!state.player.future.length) {
+    return state.player.present.currentFrames.length;
+  }
+  return state.player.future[state.player.future.length - 1].currentFrames
+    .length;
+};
 
-export const getCurrentFrames = (state) => state.player.currentFrames;
-export const getIndex = (state) => state.player.index;
+export const getFrames = (state) => state.player.present.animFrames;
+
+export const getCurrentFrames = (state) => state.player.present.currentFrames;
+export const getIndex = (state) => state.player.present.index;
 export default playerSlice.reducer;

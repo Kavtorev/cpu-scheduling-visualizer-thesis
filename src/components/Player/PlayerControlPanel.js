@@ -31,6 +31,8 @@ import {
   restartAction,
 } from "../../redux/player/playerSlice";
 
+import { ActionCreators } from "redux-undo";
+
 export default function PlayerControlPanel() {
   let dispatch = useDispatch();
   let isReady = useSelector(getIsReadyToStart);
@@ -118,6 +120,10 @@ export default function PlayerControlPanel() {
           }
           break;
         case "sBack":
+          if (isRestartVisible || isResumeVisible) {
+            dispatch(ActionCreators.undo());
+            dispatch(stop());
+          }
           break;
         case "start":
           let { frames } = executeAlgo(algo, processes);
@@ -131,6 +137,10 @@ export default function PlayerControlPanel() {
           dispatch(stop());
           break;
         case "sForward":
+          if (isRestartVisible || isResumeVisible) {
+            dispatch(ActionCreators.redo());
+            dispatch(stop());
+          }
           break;
         case "iSpeed":
           if (isDeAcceleratable) {

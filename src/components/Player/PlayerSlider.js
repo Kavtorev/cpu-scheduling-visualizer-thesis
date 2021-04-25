@@ -1,7 +1,14 @@
-import React from "react";
-import Grid from "@material-ui/core/Grid";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import React, { useEffect, useState } from "react";
+import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getIsRestartVisible,
+  getIsResumeVisible,
+  getFutureFramesLength,
+  stop,
+} from "../../redux/player/playerSlice";
+import { ActionCreators } from "redux-undo";
 
 const PrettoSlider = withStyles({
   root: {
@@ -34,5 +41,37 @@ const PrettoSlider = withStyles({
 })(Slider);
 
 export default function PlayerSlider() {
-  return <PrettoSlider />;
+  const [prevValue, setPrevValue] = useState(0);
+  const dispatch = useDispatch();
+  const framesLength = useSelector(getFutureFramesLength);
+  const isRestartVisible = useSelector(getIsRestartVisible);
+  const isResumeVisible = useSelector(getIsResumeVisible);
+
+  useEffect(() => {
+    setPrevValue(framesLength);
+  }, [framesLength]);
+
+  const handleOnChnageCommitted = (_, val) => {
+    if (val === prevValue) return;
+    if (val < prevValue) {
+      dispatch(ActionCreators.jump(val - prevValue));
+      dispatch(stop());
+    } else {
+      dispatch(ActionCreators.jump(val - prevValue));
+      dispatch(stop());
+    }
+    setPrevValue(val);
+  };
+
+  return (
+    <PrettoSlider
+      defaultValue={1}
+      min={1}
+      disabled={!(isRestartVisible || isResumeVisible)}
+      max={framesLength}
+      step={1}
+      valueLabelDisplay="auto"
+      onChangeCommitted={handleOnChnageCommitted}
+    />
+  );
 }
