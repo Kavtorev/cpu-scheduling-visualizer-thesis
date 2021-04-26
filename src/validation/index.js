@@ -49,7 +49,7 @@ export const generateSchema = yup.object().shape({
     .number()
     .typeError("Please provide a number.")
     .min(1)
-    .max(30)
+    .max(20)
     .required()
     .integer(),
 });

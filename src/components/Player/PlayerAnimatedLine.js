@@ -43,9 +43,8 @@ export default function PlayerAnimatedLine() {
   let { isFinished } = useSelector(getIsStartedStoppedFinished);
 
   let transition = useTransition(items, {
-    onPause: () => console.log("paused?"),
     config: {
-      duration: 500,
+      duration: speed,
     },
     keys: items.map((el, index) => el),
     from: { opacity: "0", transform: "translate(15px, 0)" },
@@ -68,32 +67,39 @@ export default function PlayerAnimatedLine() {
       vertical={false}
       hideScrollbars={false}
     >
-      {transition(
-        (prop, item) =>
-          item && (
-            <Grid item>
-              <animated.div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: 182,
-                  height: 88,
-                  backgroundColor: "#C4C4C4",
-                  ...prop,
-                }}
-              >
-                <Box flex="1" display="flex" alignItems="center">
-                  <Typography>{item.start.process.id}</Typography>
-                </Box>
-                <Box>
-                  <Timeline start={item.start.time} finish={item.finish.time} />
-                </Box>
-              </animated.div>
-            </Grid>
-          )
+      {!frames.length ? (
+        <div style={{ height: 88 }} />
+      ) : (
+        transition(
+          (prop, item) =>
+            item && (
+              <Grid item>
+                <animated.div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: 182,
+                    height: 88,
+                    backgroundColor: "#C4C4C4",
+                    ...prop,
+                  }}
+                >
+                  <Box flex="1" display="flex" alignItems="center">
+                    <Typography>{item.start.process.id}</Typography>
+                  </Box>
+                  <Box>
+                    <Timeline
+                      start={item.start.time}
+                      finish={item.finish.time}
+                    />
+                  </Box>
+                </animated.div>
+              </Grid>
+            )
+        )
       )}
     </ScrollContainer>
   );

@@ -1,6 +1,8 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { getRandomInt } from "../../lib/utils";
 import uniqid from "uniqid";
+import { toast } from "react-toastify";
+import UnlimitedToast from "../../components/UnlimitedToast";
 
 const initialState = {
   isSidebarToggled: false,
@@ -30,6 +32,7 @@ const initialState = {
     ],
     // row name is mapped to a field property of a column
     rows: [],
+    unlimitedRows: false,
   },
   visualizationsList: [
     { id: 23473, name: "Wizualizacja 2" },
@@ -52,7 +55,7 @@ const uiSlice = createSlice({
       let rows = [];
 
       for (let index = 0; index < rowsNumber; index++) {
-        cpuTime = getRandomInt(1, 20);
+        cpuTime = getRandomInt(1, 8);
         arrivalTime = getRandomInt(0, rowsNumber);
         priority = getRandomInt(1, rowsNumber);
 
@@ -70,6 +73,9 @@ const uiSlice = createSlice({
       }
 
       state.dataGrid.rows = rows;
+    },
+    setUnlimitedRows: (state, action) => {
+      state.dataGrid.unlimitedRows = action.payload;
     },
     setTimeQuantum: (state, action) => {
       state.chosenAlgorithm.timeQuantum = action.payload;
@@ -98,18 +104,24 @@ const uiSlice = createSlice({
     },
     addNewRow: (state, action) => {
       const { arrivalTime, cpuTime, priority } = action.payload;
-
-      state.dataGrid.rows.push({
-        id: uniqid.process(),
-        name: `Process №${state.dataGrid.rows.length + 1}`,
-        waitingTime: 0,
-        turnaroundTime: 0,
-        responseTime: 0,
-        cpuTimeLeft: cpuTime,
-        arrivalTime,
-        cpuTime,
-        priority,
-      });
+      if (state.dataGrid.rows.length < 20 || state.dataGrid.unlimitedRows) {
+        state.dataGrid.rows.push({
+          id: uniqid.process(),
+          name: `Process №${state.dataGrid.rows.length + 1}`,
+          waitingTime: 0,
+          turnaroundTime: 0,
+          responseTime: 0,
+          cpuTimeLeft: cpuTime,
+          arrivalTime,
+          cpuTime,
+          priority,
+        });
+      } else {
+        toast(<UnlimitedToast />, {
+          autoClose: 10000,
+          type: toast.TYPE.INFO,
+        });
+      }
     },
     setColumns: (state, action) => {
       state.dataGrid.columns = action.payload;
@@ -179,4 +191,5 @@ export const {
   chooseAlgo,
   togglePreemptive,
   setTimeQuantum,
+  setUnlimitedRows,
 } = uiSlice.actions;
