@@ -39,7 +39,6 @@ const initialState = {
   chosenAlgorithm: {
     name: "_NONE",
     timeQuantum: 2,
-    isError: false,
   },
 };
 
@@ -72,13 +71,9 @@ const uiSlice = createSlice({
 
       state.dataGrid.rows = rows;
     },
-    setTimeQuantumError: (state, action) => {
-      state.chosenAlgorithm.isError = action.payload;
-    },
     setTimeQuantum: (state, action) => {
-      state.chosenAlgorithm.timeQuantum = Number(action.payload);
+      state.chosenAlgorithm.timeQuantum = action.payload;
     },
-
     chooseAlgo: (state, action) => {
       let { value } = action.payload;
       if (value.startsWith("_PRIOR")) {
@@ -163,8 +158,6 @@ export const getVisualizations = createSelector(
   (vis) => vis
 );
 
-export const getTimeQuantum = (state) => state.ui.chosenAlgorithm.timeQuantum;
-export const getTimeQuantumError = (state) => state.ui.chosenAlgorithm.isError;
 export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
 export const getChosenAlgorithmName = (state) => state.ui.chosenAlgorithm.name;
 export const getChosenAlgorithm = (state) => state.ui.chosenAlgorithm;
@@ -173,7 +166,6 @@ export const getPreemptiveToggle = (state) =>
 export const getIsReadyToStart = (state) =>
   state.ui.chosenAlgorithm.name !== "_NONE" && state.ui.dataGrid.rows.length;
 export const getRows = (state) => state.ui.dataGrid.rows;
-
 export default uiSlice.reducer;
 export const {
   generateData,
@@ -187,5 +179,4 @@ export const {
   chooseAlgo,
   togglePreemptive,
   setTimeQuantum,
-  setTimeQuantumError,
 } = uiSlice.actions;

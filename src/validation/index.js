@@ -44,14 +44,6 @@ export const inputOutputSchema = yup
   .required()
   .integer();
 
-export const timeQuantumSchema = yup
-  .number()
-  .typeError("Please provide a number.")
-  .min(1)
-  .max(20)
-  .required()
-  .integer();
-
 export const generateSchema = yup.object().shape({
   rowsNumber: yup
     .number()

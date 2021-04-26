@@ -1,45 +1,31 @@
-import React, { useState } from "react";
-import { timeQuantumSchema, validate } from "../../validation";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
-import TextInput from "./TextInput";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getTimeQuantum,
-  setTimeQuantum,
-  getTimeQuantumError,
-  setTimeQuantumError,
-} from "../../redux/ui/uiSlice";
+import { useDispatch } from "react-redux";
+
+import Slider from "@material-ui/core/Slider";
+import { Typography } from "@material-ui/core";
+import { setTimeQuantum } from "../../redux/ui/uiSlice";
 
 export default function TimeQuantumForm() {
   const dispatch = useDispatch();
-  const timeQuantumValue = useSelector(getTimeQuantum);
-  const isError = useSelector(getTimeQuantumError);
-  const [helperText, setHelperText] = useState("");
 
-  const handleChange = (e) => {
-    dispatch(setTimeQuantumError(false));
-    setHelperText("");
-    let errors = validate(timeQuantumSchema)(e.target.value);
-    if (errors) {
-      dispatch(setTimeQuantumError(true));
-      setHelperText(errors);
-    }
-    dispatch(setTimeQuantum(e.target.value));
-  };
+  const marks = [...Array(10)].map((_, i) => ({ value: i + 1, label: i + 1 }));
+
+  const handleCommittedChange = (_, value) => dispatch(setTimeQuantum(value));
 
   return (
     <Grid item xs={12} sm={6} md={3}>
-      <TextInput
-        id="standard-required-timeQuantum"
-        label="Time Quantum"
-        name="timeQuantum"
-        onChange={handleChange}
-        value={timeQuantumValue}
-        error={isError}
-        helperText={helperText}
-        required
-        variant="outlined"
-        type="number"
+      <Typography id="timeQuantum-slider" gutterBottom>
+        Set Time Quantum
+      </Typography>
+      <Slider
+        aria-labelledby="timeQuantum-slider"
+        defaultValue={2}
+        step={1}
+        min={1}
+        max={10}
+        marks={marks}
+        onChangeCommitted={handleCommittedChange}
       />
     </Grid>
   );
