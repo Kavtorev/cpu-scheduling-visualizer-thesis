@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,9 +6,14 @@ import {
   getIsRestartVisible,
   getIsResumeVisible,
   getFutureFramesLength,
-  stop,
 } from "../../redux/player/playerSlice";
-import { ActionCreators } from "redux-undo";
+import {
+  setSliderCurrentValue,
+  setSliderPreviousValue,
+  getSliderCurrentValue,
+  getSliderPreviousValue,
+} from "../../redux/player/sliderSlice";
+import { makeStep } from "../../redux/player/sliderActions";
 
 const PrettoSlider = withStyles({
   root: {
@@ -41,37 +46,38 @@ const PrettoSlider = withStyles({
 })(Slider);
 
 export default function PlayerSlider() {
-  const [prevValue, setPrevValue] = useState(0);
   const dispatch = useDispatch();
   const framesLength = useSelector(getFutureFramesLength);
   const isRestartVisible = useSelector(getIsRestartVisible);
   const isResumeVisible = useSelector(getIsResumeVisible);
+  const currentVal = useSelector(getSliderCurrentValue);
+  const prevValue = useSelector(getSliderPreviousValue);
 
   useEffect(() => {
-    setPrevValue(framesLength);
-  }, [framesLength]);
+    dispatch(setSliderCurrentValue(framesLength));
+    dispatch(setSliderPreviousValue(framesLength));
+  }, [framesLength, dispatch]);
 
   const handleOnChnageCommitted = (_, val) => {
     if (val === prevValue) return;
-    if (val < prevValue) {
-      dispatch(ActionCreators.jump(val - prevValue));
-      dispatch(stop());
-    } else {
-      dispatch(ActionCreators.jump(val - prevValue));
-      dispatch(stop());
-    }
-    setPrevValue(val);
+    makeStep(dispatch, val - prevValue);
+    dispatch(setSliderPreviousValue(val));
+  };
+
+  const handleOnChange = (_, val) => {
+    dispatch(setSliderCurrentValue(val));
   };
 
   return (
     <PrettoSlider
-      defaultValue={1}
+      value={currentVal}
       min={1}
       disabled={!(isRestartVisible || isResumeVisible)}
       max={framesLength}
       step={1}
       valueLabelDisplay="auto"
       onChangeCommitted={handleOnChnageCommitted}
+      onChange={handleOnChange}
     />
   );
 }

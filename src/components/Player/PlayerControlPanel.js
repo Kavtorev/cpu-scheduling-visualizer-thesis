@@ -29,9 +29,14 @@ import {
   increaseSpeed,
   descreaseSpeed,
   restartAction,
+  getFutureFramesLength,
+  getCurrentFrames,
 } from "../../redux/player/playerSlice";
-
-import { ActionCreators } from "redux-undo";
+import { makeStep } from "../../redux/player/sliderActions";
+import {
+  moveSliderBack,
+  moveSliderForward,
+} from "../../redux/player/sliderSlice";
 
 export default function PlayerControlPanel() {
   let dispatch = useDispatch();
@@ -43,6 +48,8 @@ export default function PlayerControlPanel() {
   let isStopVisible = useSelector(getIsStopVisible);
   let isRestartVisible = useSelector(getIsRestartVisible);
   let isDeAcceleratable = useSelector(getIsDeAcceleratable);
+  let framesLength = useSelector(getFutureFramesLength);
+  let currentFramesLength = useSelector(getCurrentFrames).length;
 
   const playerButtons = [
     {
@@ -120,9 +127,12 @@ export default function PlayerControlPanel() {
           }
           break;
         case "sBack":
-          if (isRestartVisible || isResumeVisible) {
-            dispatch(ActionCreators.undo());
-            dispatch(stop());
+          if (
+            (isRestartVisible || isResumeVisible) &&
+            currentFramesLength > 1
+          ) {
+            makeStep(dispatch, -1);
+            dispatch(moveSliderBack());
           }
           break;
         case "start":
@@ -138,8 +148,8 @@ export default function PlayerControlPanel() {
           break;
         case "sForward":
           if (isRestartVisible || isResumeVisible) {
-            dispatch(ActionCreators.redo());
-            dispatch(stop());
+            makeStep(dispatch, 1);
+            dispatch(moveSliderForward(framesLength));
           }
           break;
         case "iSpeed":

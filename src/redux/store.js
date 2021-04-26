@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from "./ui/uiSlice";
 import playerReducer from "./player/playerSlice";
+import sliderReducer from "./player/sliderSlice";
 import undoable from "redux-undo";
 
 export default configureStore({
@@ -11,5 +12,6 @@ export default configureStore({
         return action.type === "animate";
       },
     }),
+    slider: sliderReducer,
   },
 });
