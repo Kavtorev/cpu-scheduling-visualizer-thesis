@@ -86,7 +86,7 @@ let playerSlice = createSlice({
     builder.addMatcher(
       isAnyOf(animateAction, restartAction),
       (state, action) => {
-        // accelarates in the beginning
+        // accelerates in the beginning
         if (state.speed === state.initialSpeed) state.speed = state.normalSpeed;
 
         // default value on the initial frame.
@@ -99,7 +99,7 @@ let playerSlice = createSlice({
         state.currentFrames = state.currentFrames.concat(frame);
         state.index += 1;
 
-        // accelarates in the end
+        // accelerates in the end
         if (state.index === state.animFrames.length)
           state.speed = state.initialSpeed;
 

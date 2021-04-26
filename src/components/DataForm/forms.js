@@ -49,7 +49,7 @@ export let algorithms = {
     fields: [...defaultFields],
   },
   _RR: {
-    label: "Round Robin",
+    label: "Round-Robin",
     fields: [...defaultFields],
   },
   _PRIOR_NONPRE: {
