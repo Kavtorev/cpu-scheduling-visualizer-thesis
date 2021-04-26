@@ -7,6 +7,8 @@ export const resetAction = createAction("reset");
 
 let initialState = {
   index: 0,
+  initialSpeed: 1,
+  normalSpeed: 1000,
   isStarted: false,
   isStopped: true,
   isFinished: false,
@@ -40,8 +42,6 @@ let playerSlice = createSlice({
     setFrames: (state, action) => {
       state.animFrames = action.payload;
     },
-    stepBack: (state, action) => {},
-    stepForward: (state, action) => {},
 
     increaseSpeed: (state, action) => {
       if (state.speed > 200) state.speed = state.speed - 300;
@@ -52,7 +52,7 @@ let playerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(startAction, (state, action) => {
-      state.speed = 1000;
+      state.speed = state.initialSpeed;
       state.isStarted = true;
       state.isStopped = false;
     });
@@ -86,6 +86,9 @@ let playerSlice = createSlice({
     builder.addMatcher(
       isAnyOf(animateAction, restartAction),
       (state, action) => {
+        // accelarates in the beginning
+        if (state.speed === state.initialSpeed) state.speed = state.normalSpeed;
+
         // default value on the initial frame.
         let index = action.payload || 0;
         let frame = state.animFrames[index];
@@ -95,6 +98,10 @@ let playerSlice = createSlice({
 
         state.currentFrames = state.currentFrames.concat(frame);
         state.index += 1;
+
+        // accelarates in the end
+        if (state.index === state.animFrames.length)
+          state.speed = state.initialSpeed;
 
         if (!state.isFinished) {
           if (state.individualMetrics[processIdStart] === undefined)
@@ -133,8 +140,6 @@ let playerSlice = createSlice({
 export let {
   stop,
   finish,
-  stepBack,
-  stepForward,
   increaseSpeed,
   descreaseSpeed,
   setFrames,
