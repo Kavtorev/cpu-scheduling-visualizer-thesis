@@ -14,8 +14,13 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Logo from "./Logo";
+import { algorithms } from "./DataForm/forms";
 import { useDispatch, useSelector } from "react-redux";
-import { getIsSidebarToggled, toggleSidebar } from "../redux/ui/uiSlice";
+import {
+  getChosenAlgorithmName,
+  getIsSidebarToggled,
+  toggleSidebar,
+} from "../redux/ui/uiSlice";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -59,6 +64,7 @@ export default function Navbar() {
   const styles = useStyles();
   const dispatch = useDispatch();
   const toggle = useSelector(getIsSidebarToggled);
+  const algo = useSelector(getChosenAlgorithmName);
 
   const handleSidebarToggle = (option) => () => dispatch(toggleSidebar(option));
 
@@ -68,7 +74,7 @@ export default function Navbar() {
       <Toolbar classes={{ root: styles.root }}>
         <Logo />
         <Typography variant="h6" className={styles.title}>
-          Good Morning Dima.
+          {algo !== "_NONE" ? algorithms[algo].label : "Good Morning Dima."}
         </Typography>
         <Hidden xsDown>
           <LoginButton

@@ -1,7 +1,6 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { useDispatch } from "react-redux";
-
 import Slider from "@material-ui/core/Slider";
 import { Typography } from "@material-ui/core";
 import { setTimeQuantum } from "../../redux/ui/uiSlice";

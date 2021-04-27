@@ -29,6 +29,7 @@ export default function GenerateButton() {
     },
     validationSchema: generateSchema,
     onSubmit: (val) => {
+      setAnchorEl(null);
       dispatch(generateData(val));
     },
   });
@@ -61,7 +62,7 @@ export default function GenerateButton() {
         onClose={handleClose}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: "left",
         }}
         transformOrigin={{
           vertical: "top",
