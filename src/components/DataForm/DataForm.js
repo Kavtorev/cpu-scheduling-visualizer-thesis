@@ -11,10 +11,9 @@ import { Formik, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewRow,
-  chooseAlgo,
+  chooseNewAlgo,
   getChosenAlgorithmName,
 } from "../../redux/ui/uiSlice";
-import { resetAction } from "../../redux/player/playerSlice";
 import TextInput from "./TextInput";
 import MenuItem from "@material-ui/core/MenuItem";
 import { algorithms } from "./forms";
@@ -25,6 +24,7 @@ import GenerateButton from "./GenerateButton";
 const useStyles = makeStyles((theme) => ({
   paperRoot: {
     padding: theme.dataGridPadding.padding,
+    borderTop: "3px solid #11606B",
   },
 
   gridRoot: {
@@ -45,16 +45,17 @@ export default function DataForm() {
   const algo = useSelector(getChosenAlgorithmName);
 
   const handleAlgoChange = ({ target }) => {
+    console.log("target val:", target.value);
     dispatch(
-      chooseAlgo({
-        value: target.value,
+      chooseNewAlgo({
+        type: target.value,
       })
     );
   };
 
   return (
     <Paper classes={{ root: styles.paperRoot }}>
-      <PaperHeader>Wybierz algorytm</PaperHeader>
+      <PaperHeader>Choose Algorithm</PaperHeader>
       <Box mt={1} />
       <Grid container classes={{ root: styles.gridRoot }}>
         <Grid item xs={12} md={6}>

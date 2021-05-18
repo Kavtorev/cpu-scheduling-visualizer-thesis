@@ -10,8 +10,8 @@ import {
   getNumberOfSelectedRows,
   deleteSelectedRows,
   resetRowSelection,
-} from "../redux/ui/uiSlice";
-import PaperHeader from "./PaperHeader";
+} from "../../redux/ui/uiSlice";
+import PaperHeader from "../PaperHeader";
 import GridToolbarPredefinedOptions from "./GridToolbarPredefinedOptions";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,10 +60,10 @@ export default memo(function CustomToolbar() {
 
   return (
     <Grid container alignItems="center">
-      <Grid item sm={12} lg={6}>
-        <PaperHeader>Dane wejściowe</PaperHeader>
+      <Grid item sm={12} lg={4}>
+        <PaperHeader>Input Data</PaperHeader>
       </Grid>
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} lg={8}>
         <GridToolbarContainer className={styles.toolbarContainer}>
           <GridToolbarPredefinedOptions />
           <GridToolBarDelete />

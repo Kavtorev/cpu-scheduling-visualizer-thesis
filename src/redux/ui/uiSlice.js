@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import UnlimitedToast from "../../components/UnlimitedToast";
 
 const initialState = {
-  isSidebarToggled: false,
   dataGrid: {
     selectedRows: [],
     numberOfRows: 0,
@@ -34,11 +33,7 @@ const initialState = {
     rows: [],
     unlimitedRows: false,
   },
-  visualizationsList: [
-    { id: 23473, name: "Wizualizacja 2" },
-    { id: 3364, name: "Wizualizacja 3" },
-    { id: 4737, name: "Wizualizacja 4" },
-  ],
+  visualisationsList: [],
   chosenAlgorithm: {
     name: "_NONE",
     timeQuantum: 2,
@@ -49,6 +44,28 @@ const uiSlice = createSlice({
   name: "ui",
   initialState: initialState,
   reducers: {
+    resetUI: (state) => {
+      for (let key in state) state[key] = initialState[key];
+    },
+    chooseNewAlgo: (state, action) => {
+      let { type } = action.payload;
+      if (type.startsWith("_PRIOR")) {
+        if (!state.chosenAlgorithm.name.startsWith("_PRIOR")) {
+          state.dataGrid.columns.push({
+            id: "priority",
+            field: "priority",
+            headerName: "Priority",
+            flex: 0.1,
+          });
+
+          // mb generate random priorities in the future...
+          state.dataGrid.rows = [];
+        }
+      } else {
+        state.dataGrid.columns = initialState.dataGrid.columns;
+      }
+      state.chosenAlgorithm.name = type;
+    },
     generateData: (state, action) => {
       let { rowsNumber } = action.payload;
       let cpuTime, arrivalTime, priority;
@@ -79,28 +96,6 @@ const uiSlice = createSlice({
     },
     setTimeQuantum: (state, action) => {
       state.chosenAlgorithm.timeQuantum = action.payload;
-    },
-    chooseAlgo: (state, action) => {
-      let { value } = action.payload;
-      if (value.startsWith("_PRIOR")) {
-        if (!state.chosenAlgorithm.name.startsWith("_PRIOR")) {
-          state.dataGrid.columns.push({
-            id: "priority",
-            field: "priority",
-            headerName: "Priority",
-            flex: 0.1,
-          });
-
-          // mb generate random priorities in the future...
-          state.dataGrid.rows = [];
-        }
-      } else {
-        state.dataGrid.columns = initialState.dataGrid.columns;
-      }
-      state.chosenAlgorithm.name = value;
-    },
-    toggleSidebar: (state, action) => {
-      state.isSidebarToggled = action.payload;
     },
     addNewRow: (state, action) => {
       const { arrivalTime, cpuTime, priority } = action.payload;
@@ -165,11 +160,8 @@ export const getNumberOfSelectedRows = createSelector(
   (num) => num
 );
 
-export const getVisualizations = createSelector(
-  (state) => state.ui.visualizationsList,
-  (vis) => vis
-);
-
+export const getCrudStatus = (state) => state.ui.crudStatus;
+export const getSavedId = (state) => state.ui.savedVisId;
 export const getIsSidebarToggled = (state) => state.ui.isSidebarToggled;
 export const getChosenAlgorithmName = (state) => state.ui.chosenAlgorithm.name;
 export const getChosenAlgorithm = (state) => state.ui.chosenAlgorithm;
@@ -178,18 +170,18 @@ export const getPreemptiveToggle = (state) =>
 export const getIsReadyToStart = (state) =>
   state.ui.chosenAlgorithm.name !== "_NONE" && state.ui.dataGrid.rows.length;
 export const getRows = (state) => state.ui.dataGrid.rows;
+export const getRowsLength = (state) => state.ui.dataGrid.rows.length;
 export default uiSlice.reducer;
 export const {
   generateData,
-  toggleSidebar,
   setColumns,
   setRows,
   selectRows,
   deleteSelectedRows,
   resetRowSelection,
   addNewRow,
-  chooseAlgo,
-  togglePreemptive,
   setTimeQuantum,
   setUnlimitedRows,
+  resetUI,
+  chooseNewAlgo,
 } = uiSlice.actions;

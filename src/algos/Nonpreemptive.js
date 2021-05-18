@@ -1,13 +1,8 @@
 import { f, s } from "./helpers/index";
 
-export default function vanillaNonpreemptive({
-  processes,
-  comparator,
-  criteria,
-}) {
+export default function Nonpreemptive({ processes, comparator, criteria }) {
   let uncompleted = processes.length;
   let readyQueue = processes.map((e) => ({ ...e })).sort(comparator);
-  let finishedLog = [];
   let clock = 0;
   let frames = [];
   let frame = null;
@@ -42,23 +37,23 @@ export default function vanillaNonpreemptive({
       continue;
     }
 
-    readyQueue[curIndex].responseTime = clock;
-    frame = s(clock, readyQueue[curIndex]);
+    let running = readyQueue[curIndex];
 
-    clock += readyQueue[curIndex].cpuTime;
-    readyQueue[curIndex].cpuTimeLeft = 0;
+    // responseTime
+    running.responseTime = clock - running.arrivalTime;
+    frame = s(clock, running);
 
-    // turnarounTime
-    readyQueue[curIndex].turnaroundTime =
-      clock - readyQueue[curIndex].arrivalTime;
+    clock += running.cpuTime;
+    running.cpuTimeLeft = 0;
+
+    // turnaroundTime
+    running.turnaroundTime = clock - running.arrivalTime;
     // waitingTime
-    readyQueue[curIndex].waitingTime =
-      readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuTime;
+    running.waitingTime = running.turnaroundTime - running.cpuTime;
     // exitTime
-    readyQueue[curIndex].exitTime = clock;
+    running.exitTime = clock;
 
-    finishedLog.push(readyQueue[curIndex]);
-    frames.push(f(frame, clock, "Finished", readyQueue[curIndex]));
+    frames.push(f(frame, clock, "Finished", running));
 
     readyQueue = readyQueue.filter((e, i) => {
       return i !== curIndex;
@@ -67,5 +62,5 @@ export default function vanillaNonpreemptive({
     uncompleted -= 1;
   }
 
-  return { finishedLog, frames };
+  return { frames };
 }

@@ -1,10 +1,9 @@
 import { s, f } from "./helpers/index";
 
-export default function vanillaPreemptive({ processes, comparator, criteria }) {
+export default function Preemptive({ processes, comparator, criteria }) {
   let uncompleted = processes.length;
   let readyQueue = processes.map((e) => ({ ...e })).sort(comparator);
   let previous = null;
-  let finishedSum = [];
   let clock = 0;
   let frames = [];
   let frame = null;
@@ -39,36 +38,31 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
       continue;
     }
 
-    if (previous != null) {
-      if (readyQueue[previous].id !== readyQueue[curIndex].id) {
-        frames.push(f(frame, clock, `Preempted`, readyQueue[previous]));
-        frame = s(clock, readyQueue[curIndex]);
-      }
+    let running = readyQueue[curIndex];
+
+    if (previous !== null && readyQueue[previous].id !== running.id) {
+      frames.push(f(frame, clock, `Preempted`, readyQueue[previous]));
+      frame = s(clock, running);
     }
 
     if (frame === null) {
-      frame = s(clock, readyQueue[curIndex]);
+      frame = s(clock, running);
     }
 
-    if (readyQueue[curIndex].cpuTime === readyQueue[curIndex].cpuTimeLeft) {
-      readyQueue[curIndex].responseTime =
-        clock - readyQueue[curIndex].arrivalTime;
-      frame = s(clock, readyQueue[curIndex]);
+    if (running.cpuTime === running.cpuTimeLeft) {
+      running.responseTime = clock - running.arrivalTime;
+      frame = s(clock, running);
     }
 
-    readyQueue[curIndex].cpuTimeLeft -= 1;
+    running.cpuTimeLeft -= 1;
     clock += 1;
 
-    if (!readyQueue[curIndex].cpuTimeLeft) {
-      readyQueue[curIndex].turnaroundTime =
-        clock - readyQueue[curIndex].arrivalTime;
-      readyQueue[curIndex].waitingTime =
-        readyQueue[curIndex].turnaroundTime - readyQueue[curIndex].cpuTime;
-      readyQueue[curIndex].exitTime = clock;
+    if (!running.cpuTimeLeft) {
+      running.turnaroundTime = clock - running.arrivalTime;
+      running.waitingTime = running.turnaroundTime - running.cpuTime;
+      running.exitTime = clock;
 
-      finishedSum.push({ ...readyQueue[curIndex] });
-
-      frames.push(f(frame, clock, "Finished", readyQueue[curIndex]));
+      frames.push(f(frame, clock, "Finished", running));
 
       frame = null;
 
@@ -84,5 +78,5 @@ export default function vanillaPreemptive({ processes, comparator, criteria }) {
     previous = curIndex;
   }
 
-  return { finishedSum, frames };
+  return { frames };
 }

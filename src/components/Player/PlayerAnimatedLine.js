@@ -1,6 +1,5 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography } from "@material-ui/core";
 import Timeline from "./Timeline";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,28 +17,12 @@ import { useTransition, animated } from "react-spring";
 import ScrollContainer from "react-indiana-drag-scroll";
 import "./ScrollContainer.css";
 
-const useStyles = makeStyles((theme) => ({
-  gridRoot: {
-    height: 130,
-    marginTop: "0.9em",
-    width: "100%",
-    flexWrap: "nowrap",
-    overflow: "auto",
-  },
-  processBoxRoot: {
-    width: 182,
-    height: 88,
-    backgroundColor: "#C4C4C4",
-  },
-}));
-
 export default function PlayerAnimatedLine() {
   const dispatch = useDispatch();
   let speed = useSelector(getSpeed);
   let frames = useSelector(getFrames);
   let index = useSelector(getIndex);
   let items = useSelector(getCurrentFrames);
-
   let { isFinished } = useSelector(getIsStartedStoppedFinished);
 
   let transition = useTransition(items, {

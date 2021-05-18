@@ -2,9 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import DataTable from "../components/DataTable";
+import DataTable from "../components/DataTable/DataTable";
 import DataForm from "../components/DataForm/DataForm.js";
-import VisualizationsBoard from "../components/VisualizationsBoard";
 import Player from "../components/Player/Player.js";
 import Logger from "../components/Logger";
 
@@ -13,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.navbarHeight.minHeight,
     width: "100%",
     padding: "2.5625em",
+    [theme.breakpoints.down("sm")]: {
+      padding: "1em",
+    },
   },
 }));
 
@@ -29,7 +31,7 @@ export default function BaseLayout() {
             <Box mb={2} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <VisualizationsBoard />
+            <Logger />
             <Box mb={2} />
           </Grid>
         </Grid>
@@ -39,9 +41,7 @@ export default function BaseLayout() {
           <Grid item xs={12} md={8}>
             <Player />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Logger />
-          </Grid>
+          <Grid item xs={12} md={4}></Grid>
         </Grid>
       </Grid>
     </Grid>

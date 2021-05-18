@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Popover from "@material-ui/core/Popover";
 import TextInput from "./TextInput";
 import { generateData } from "../../redux/ui/uiSlice";
 import { useDispatch } from "react-redux";
-import Fade from "@material-ui/core/Fade";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";

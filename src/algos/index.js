@@ -1,42 +1,40 @@
-import vanillaRoundRobin from "./vanillaRoundRobin";
-import vanillaNonpreemptive from "./vanillaNonpreemptive";
-import vanillaPreemptive from "./vanillaPreemptive";
-import { fifoComparator } from "./comparators";
+import RoundRobin from "./RoundRobin";
+import Nonpreemptive from "./Nonpreemptive";
+import Preemptive from "./Preemptive";
+
+const comparator = (a, b) => {
+  if (a.arrivalTime > b.arrivalTime) return 1;
+  else return -1;
+};
 
 let mappedAlgos = {
   _FIFO: {
-    sol: vanillaNonpreemptive,
-    comparator: fifoComparator,
+    sol: Nonpreemptive,
     criteria: "",
   },
   _SJF: {
-    sol: vanillaNonpreemptive,
-    comparator: fifoComparator,
+    sol: Nonpreemptive,
     criteria: "cpuTimeLeft",
   },
   _SRTF: {
-    sol: vanillaPreemptive,
-    comparator: fifoComparator,
+    sol: Preemptive,
     criteria: "cpuTimeLeft",
   },
   _PRIOR_PRE: {
-    sol: vanillaPreemptive,
-    comparator: fifoComparator,
+    sol: Preemptive,
     criteria: "priority",
   },
   _PRIOR_NONPRE: {
-    sol: vanillaNonpreemptive,
-    comparator: fifoComparator,
+    sol: Nonpreemptive,
     criteria: "priority",
   },
   _RR: {
-    sol: vanillaRoundRobin,
-    comparator: fifoComparator,
+    sol: RoundRobin,
     criteria: "",
   },
 };
 
 export default function executeAlgo(algo, processes) {
-  let { sol, criteria, comparator } = mappedAlgos[algo.name];
+  let { sol, criteria } = mappedAlgos[algo.name];
   return sol({ ...algo, comparator, criteria, processes });
 }

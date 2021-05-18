@@ -2,13 +2,12 @@ import React from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-
 import { useDispatch, useSelector } from "react-redux";
 import {
   getRowsSelector,
   getColumnsSelector,
   selectRows,
-} from "../redux/ui/uiSlice";
+} from "../../redux/ui/uiSlice";
 
 import CustomToolbar from "./CustomToolbar";
 
@@ -16,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
   paperRoot: {
     height: "50vh",
     width: "100%",
+    borderTop: "2px solid #F4A739",
   },
   dataGridRoot: {
     padding: theme.dataGridPadding.padding,
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "rgba(0, 102, 204, 0.08)",
     },
     "& .MuiCheckbox-colorPrimary.Mui-checked": {
-      color: "#0066CC",
+      color: theme.palette.secondary.main,
     },
   },
   dataGridRootVariable: {

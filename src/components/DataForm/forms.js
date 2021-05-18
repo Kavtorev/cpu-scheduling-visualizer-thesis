@@ -25,35 +25,27 @@ let priority = {
   schema: prioritySchema,
 };
 
-let timeQuantum = {
-  name: "timeQuantum",
-  id: "standard-required-timeQuantum",
-  label: "Time Quantum",
-  schema: prioritySchema,
-};
-
 let defaultFields = [arrivalTime, cpuTime];
 
 export let algorithms = {
-  // _NONE: {},
   _FIFO: {
     label: "First come first served",
-    fields: [...defaultFields],
+    fields: defaultFields,
   },
   _SJF: {
     label: "Shortest Job First",
-    fields: [...defaultFields],
+    fields: defaultFields,
   },
   _SRTF: {
     label: "Shortest Remaining Time",
-    fields: [...defaultFields],
+    fields: defaultFields,
   },
   _RR: {
     label: "Round-Robin",
-    fields: [...defaultFields],
+    fields: defaultFields,
   },
   _PRIOR_NONPRE: {
-    label: "Priority (nonpreemptive)",
+    label: "Priority (non-preemptive)",
     fields: [...defaultFields, priority],
   },
   _PRIOR_PRE: {

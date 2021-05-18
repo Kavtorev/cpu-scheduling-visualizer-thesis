@@ -1,12 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  sliderCurrentValue: 0,
+  sliderPreviousValue: 0,
+};
+
 const sliderSlice = createSlice({
   name: "slider",
-  initialState: {
-    sliderCurrentValue: 0,
-    sliderPreviousValue: 0,
-  },
+  initialState,
   reducers: {
+    resetSliderSlice: (state) => {
+      for (let key in state) state[key] = initialState[key];
+    },
     setSliderCurrentValue: (state, action) => {
       state.sliderCurrentValue = action.payload;
     },
@@ -42,5 +47,6 @@ export const {
   setSliderPreviousValue,
   moveSliderBack,
   moveSliderForward,
+  resetSliderSlice,
 } = sliderSlice.actions;
 export default sliderSlice.reducer;

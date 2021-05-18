@@ -25,6 +25,9 @@ let playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
+    resetPlayerSlice: (state) => {
+      for (let key in state) state[key] = initialState[key];
+    },
     stop: (state, action) => {
       state.isStopped = true;
       state.speed = null;
@@ -144,6 +147,7 @@ export let {
   descreaseSpeed,
   setFrames,
   resume,
+  resetPlayerSlice,
 } = playerSlice.actions;
 
 export const getIsStartVisible = (state) =>
